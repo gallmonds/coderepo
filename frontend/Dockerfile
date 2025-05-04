@@ -1,6 +1,13 @@
-# Etapa 1: build
-FROM node:20 AS builder
-WORKDIR /app
-COPY . .
-RUN npm install && npm run build
+FROM node:21-alpine3.18 as build
 
+WORKDIR /app
+
+COPY package.json package-lock.json angular.json /app
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 4200
+
+CMD ["npx", "ng", "serve", "--host", "0.0.0.0"]
