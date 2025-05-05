@@ -1,1 +1,46 @@
-<p>home works!</p>
+<p class="text-blue-900">Esta es la pagina principal, fijate en el codigo que clases tiene. Tienes una lista completa en <a class="underline" href="https://tailwindcss.com/docs/styling-with-utility-classes">la pagina de Tailwind</a>.</p>
+
+<br />
+<p class="text-red-800">Esta pagina es la / por defecto, puedes borrar estos contenidos para trabajar sobre el index sin problema.</p>
+
+<br />
+
+<h2 class="text-green-900">A considerar:</h2>
+<ul>
+    <li>-Angular por defect maneja el tag html asi que no tienes que preocuparte de agregarlo</li>
+    <li>-Te recomiendo usar divs para separar todo en contenedores, y darle ids o clases unicas. Por ejemplo, si tienes un contenedor para una seccion, poner un div, si tienes una seccion dentro de esa seccion, otro div</li>
+    <li>-Los footer, sidebars y navbars son recursos que se utilizan en todas las paginas del sistema menos en login (tal como en el mockup). No tienes que copiar todo el codigo del alguno de los elementos en todas las paginas, puedes reutilizar el codigo.</li>
+    <li>-En ningun momento vas a tener que tocar algun archivo css, si algo no se ve como pretendias, hay que modificar el tailwind</li>
+    <li>-Empieza desde el escritorio nomas, da igual si queda responsive o no</li>
+    <li>-Si estas corriendo el codigo desde docker, deberias poder ver tus cambios en vivo cada que guardas</li>
+    <li>-Si puedes hace un componente de error 404, yo me encargo que dirija alli cuando no encuentre pagina</li>
+</ul>
+
+<br />
+
+
+<h2 class="text-green-900">Para poder empezar a hacer cambios debes:</h2>
+<ol>
+    <li>1. Instalar nvm en <a class="underline" href="https://github.com/coreybutler/nvm-windows/releases/download/1.1.12/nvm-setup.exe">este link</a>.</li>
+    <li>2. Abrir una terminal (Normalmente con Windows+X y luego A)</li>
+    <li>3. Escribir 'nvm install latest'</li>
+    <li>4. Ir al directorio del proyecto que instalaste (si tienes dudas preguntame, pero te dejo una mini guia. Con ls puedes ver en que directorio estas ahora, con cd (nombre del directorio) puedes ir al directorio que nombraste, y con pwd puedes ver en que ruta estas)</li>
+    <li>5. Escribir 'npm i -g &#64;angular/core'</li>
+    <li>6. Escribir 'npm i'</li>
+</ol>
+
+<br />
+
+<h2 class="text-green-900">Para poder crear nuevas paginas debes:</h2>
+<ol>
+    <li>1. Ir a /src/app/pages en tu terminal</li>
+    <li>2. Escribir 'ng generate component nombredetupagina'. Esto va a generar todos los archivos que necesitas.</li>
+    <li>3. Debes rutear tu componente para que aparezca en tu navegador como localhost:4200/nombredetucomponente</li>
+    <li>4. Para rutear, debes editar el archivo llamado 'app.routes.ts', que se encuentra en src/app/config</li>
+    <li>5. Debes agregar un nuevo import como los que ya estan, en este caso tienes que poner "import &lcub; NombreComponent &rcub; from '../pages/home/nombredetucomponente.component'"</li>
+    <li>6. Luego tienes que agregar una nueva ruta a la lista. En una nueva linea abajo de la que ya existe, tienes que poner "&lcub; path: 'nombre', component: NombreComponent &rcub;,"</li>
+</ol>
+
+<br />
+
+Happy coding
