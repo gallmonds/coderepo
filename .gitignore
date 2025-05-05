@@ -1,0 +1,30 @@
+# Node (Angular)
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# ASP.NET
+backend/bin/
+backend/obj/
+backend/*.db
+backend/*.sqlite
+backend/appsettings.Development.json
+backend/*.user
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Docker
+*.log
+*.env
+.env.*
+
+# IDEs
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
