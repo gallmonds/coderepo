@@ -4,12 +4,12 @@ frontend/dist/
 frontend/.angular/
 
 # ASP.NET
-backend/bin/
-backend/obj/
-backend/*.db
-backend/*.sqlite
-backend/appsettings.Development.json
-backend/*.user
+api/bin/
+api/obj/
+api/*.db
+api/*.sqlite
+api/appsettings.Development.json
+api/*.user
 
 # Sistema
 .DS_Store
@@ -28,3 +28,5 @@ Thumbs.db
 *.userosscache
 *.sln.docstates
 
+# Postgres
+postgres/data
