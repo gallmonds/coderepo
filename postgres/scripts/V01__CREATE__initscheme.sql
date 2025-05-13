@@ -7,8 +7,32 @@ CREATE TABLE IF NOT EXISTS content_type (
 );
 
 CREATE TABLE IF NOT EXISTS reportstatus (
+
 	status_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
 	status_name VARCHAR(255) NOT NULL,
+	created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+	audit_isdeleted CHAR(1) DEFAULT 0 NOT NULL,
+	version INTEGER NOT NULL
+
+);
+
+CREATE TABLE IF NOT EXISTS category (
+
+
+	category_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+	category_name VARCHAR(255) NOT NULL,
+
+	created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+	audit_isdeleted CHAR(1) DEFAULT 0 NOT NULL,
+	version INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS media (
+
+	media_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+	file_path VARCHAR(255) NOT NULL,
+	mime_type VARCHAR(50) NOT NULL,
+	category_id INT REFERENCES category(category_id) NOT NULL,
 	created_at TIMESTAMP DEFAULT NOW() NOT NULL,
 	audit_isdeleted CHAR(1) DEFAULT 0 NOT NULL,
 	version INTEGER NOT NULL
@@ -30,36 +54,18 @@ CREATE TABLE IF NOT EXISTS tag (
 	version INTEGER NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS category (
-	category_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
-	category_name VARCHAR(255) NOT NULL,
-	created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-	audit_isdeleted CHAR(1) DEFAULT 0 NOT NULL,
-	version INTEGER NOT NULL
-);
-
-
-CREATE TABLE IF NOT EXISTS media (
-	media_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
-	file_path VARCHAR(255) NOT NULL,
-	mime_type VARCHAR(50) NOT NULL,
-	category_id INT REFERENCES category(category_id) NOT NULL,
-	created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-	audit_isdeleted CHAR(1) DEFAULT 0 NOT NULL,
-	version INTEGER NOT NULL
-);
-
 
 CREATE TABLE IF NOT EXISTS role (
 	role_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
 	role_name VARCHAR(255) NOT NULL,
-	icon_id INT REFERENCES media(media_id) NOT NULL,
+	icon_id INT REFERENCES media(media_id) NULL,
+
 	created_at TIMESTAMP DEFAULT NOW() NOT NULL,
 	audit_isdeleted CHAR(1) DEFAULT 0 NOT NULL,
 	version INTEGER NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS permission_role (
+CREATE TABLE IF NOT EXISTS role_permission (
 	role_id INT REFERENCES role(role_id) NOT NULL,
 	permission_id INT REFERENCES permission(permission_id) NOT NULL,
 	created_at TIMESTAMP DEFAULT NOW() NOT NULL,
@@ -75,17 +81,20 @@ CREATE TABLE IF NOT EXISTS dbuser (
 	password_hash VARCHAR(255) NOT NULL,
 	password_salt VARCHAR(255) NOT NULL,
 	isflagged CHAR(1) DEFAULT 0 NOT NULL,
+
 	isbanned CHAR(1) DEFAULT 0 NOT NULL,
 	created_at TIMESTAMP DEFAULT NOW() NOT NULL,
 	audit_isdeleted CHAR(1) DEFAULT 0 NOT NULL,
 	version INTEGER NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS permission_user (
+
+CREATE TABLE IF NOT EXISTS role_user (
 	user_id INT REFERENCES dbuser(user_id) NOT NULL,
-	permission_id INT REFERENCES permission(permission_id) NOT NULL,
+	role_id INT REFERENCES role(role_id) NOT NULL,
 	created_at TIMESTAMP DEFAULT NOW() NOT NULL,
 	audit_isdeleted CHAR(1) DEFAULT 0 NOT NULL,
+
 	version INTEGER NOT NULL
 );
 
@@ -94,11 +103,11 @@ CREATE TABLE IF NOT EXISTS supportedlang (
 	lang_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
 	lang_name VARCHAR(255) NOT NULL,
 	icon_id INT REFERENCES media(media_id) NOT NULL,
+
 	created_at TIMESTAMP DEFAULT NOW() NOT NULL,
 	audit_isdeleted CHAR(1) DEFAULT 0 NOT NULL,
 	version INTEGER NOT NULL
 );
-
 
 CREATE TABLE IF NOT EXISTS badge (
 	badge_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
@@ -110,8 +119,8 @@ CREATE TABLE IF NOT EXISTS badge (
 );
 
 
-
 CREATE TABLE IF NOT EXISTS algorithm (
+
 	algorithm_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
 	owner_id INT REFERENCES dbuser(user_id) NOT NULL,
 	title VARCHAR(255) NOT NULL,
@@ -126,8 +135,10 @@ CREATE TABLE IF NOT EXISTS algorithm_collaborator (
 	algorithm_id INT REFERENCES algorithm(algorithm_id) NOT NULL,
 	created_at TIMESTAMP DEFAULT NOW() NOT NULL,
 	audit_isdeleted CHAR(1) DEFAULT 0 NOT NULL,
+
 	version INTEGER NOT NULL
 );
+
 
 CREATE TABLE IF NOT EXISTS dbgroup (
 	group_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
@@ -138,6 +149,7 @@ CREATE TABLE IF NOT EXISTS dbgroup (
 	created_at TIMESTAMP DEFAULT NOW() NOT NULL,
 	audit_isdeleted CHAR(1) DEFAULT 0 NOT NULL,
 	version INTEGER NOT NULL
+
 );
 
 CREATE TABLE IF NOT EXISTS group_algorithm (
@@ -149,13 +161,16 @@ CREATE TABLE IF NOT EXISTS group_algorithm (
 );
 
 CREATE TABLE IF NOT EXISTS algorithm_lang (
+
 	algorithm_id INT REFERENCES algorithm(algorithm_id) NOT NULL,
 	lang_id INT REFERENCES supportedlang(lang_id) NOT NULL,
 	rootlang_path VARCHAR(255) NOT NULL,
 	created_at TIMESTAMP DEFAULT NOW() NOT NULL,
 	audit_isdeleted CHAR(1) DEFAULT 0 NOT NULL,
 	version INTEGER NOT NULL
+
 );
+
 
 
 CREATE TABLE IF NOT EXISTS algorithm_meta (
@@ -190,11 +205,13 @@ CREATE TABLE IF NOT EXISTS report (
 	version INTEGER NOT NULL
 );
 
+
 CREATE TABLE IF NOT EXISTS rating (
 	user_id INT REFERENCES dbuser(user_id) NOT NULL,
 	type_id INT REFERENCES content_type(type_id) NOT NULL,
 	content_id INT NOT NULL,
 	created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+
 	audit_isdeleted CHAR(1) DEFAULT 0 NOT NULL,
 	version INTEGER NOT NULL
 );
@@ -205,10 +222,12 @@ CREATE TABLE IF NOT EXISTS comment (
 	content_id INTEGER NOT NULL,
 	body TEXT NOT NULL,
 	replyto_id INT REFERENCES comment(comment_id) NULL,
+
 	owner_id INT REFERENCES dbuser(user_id) NOT NULL,
 	created_at TIMESTAMP DEFAULT NOW() NOT NULL,
 	audit_isdeleted CHAR(1) DEFAULT 0 NOT NULL,
 	version INTEGER NOT NULL
+
 );
 
 CREATE TABLE IF NOT EXISTS tag_algorithm (
@@ -225,6 +244,7 @@ CREATE TABLE IF NOT EXISTS moderationlog (
 	type_id INT REFERENCES content_type(type_id) NOT NULL,
 	content_id INTEGER NOT NULL,
 	created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+
 	audit_isdeleted CHAR(1) DEFAULT 0 NOT NULL,
 	version INTEGER NOT NULL
 );
@@ -232,6 +252,7 @@ CREATE TABLE IF NOT EXISTS moderationlog (
 CREATE TABLE IF NOT EXISTS algorithm_changelog (
 	changelog_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
 	algorithm_id INT REFERENCES algorithm(algorithm_id) NOT NULL,
+
 	lang_id INT REFERENCES supportedlang(lang_id) NOT NULL,
 	file_path VARCHAR(255) NOT NULL,
 	created_at TIMESTAMP DEFAULT NOW() NOT NULL,
