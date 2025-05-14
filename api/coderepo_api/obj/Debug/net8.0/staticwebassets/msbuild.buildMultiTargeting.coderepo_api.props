@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\coderepo_api.props" />
+</Project>
