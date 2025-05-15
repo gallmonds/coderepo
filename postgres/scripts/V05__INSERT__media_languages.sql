@@ -1,0 +1,12 @@
+INSERT INTO media(file_path, mime_type, category_id, version) VALUES ('static/media/language/c.svg', 'image/svg+xml', 5, 1);
+INSERT INTO media(file_path, mime_type, category_id, version) VALUES ('static/media/language/cpp.svg', 'image/svg+xml', 5, 1);
+INSERT INTO media(file_path, mime_type, category_id, version) VALUES ('static/media/language/cs.svg', 'image/svg+xml', 5, 1);
+INSERT INTO media(file_path, mime_type, category_id, version) VALUES ('static/media/language/go.svg', 'image/svg+xml', 5, 1);
+INSERT INTO media(file_path, mime_type, category_id, version) VALUES ('static/media/language/java.svg', 'image/svg+xml', 5, 1);
+INSERT INTO media(file_path, mime_type, category_id, version) VALUES ('static/media/language/js.svg', 'image/svg+xml', 5, 1);
+INSERT INTO media(file_path, mime_type, category_id, version) VALUES ('static/media/language/lua.svg', 'image/svg+xml', 5, 1);
+INSERT INTO media(file_path, mime_type, category_id, version) VALUES ('static/media/language/perl.svg', 'image/svg+xml', 5, 1);
+INSERT INTO media(file_path, mime_type, category_id, version) VALUES ('static/media/language/py.svg', 'image/svg+xml', 5, 1);
+INSERT INTO media(file_path, mime_type, category_id, version) VALUES ('static/media/language/ruby.svg', 'image/svg+xml', 5, 1);
+INSERT INTO media(file_path, mime_type, category_id, version) VALUES ('static/media/language/rust.svg', 'image/svg+xml', 5, 1);
+INSERT INTO media(file_path, mime_type, category_id, version) VALUES ('static/media/language/swift.svg', 'image/svg+xml', 5, 1);
