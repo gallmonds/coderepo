@@ -34,7 +34,10 @@ public class UserController : ControllerBase
         if (user == null)
         {
             return NotFound();
-        }   
+        }
         return Ok(user);
     }
+
+    
+
 }

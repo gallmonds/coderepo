@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using coderepo_api.Data;
 using coderepo_api.Models;
 using Npgsql;
+using coderepo_api.Dtos;
 
 namespace coderepo_api.Controllers;
 
@@ -66,4 +67,26 @@ public class AlgorithmController : ControllerBase
 
         return Ok(algorithm);
     }
+
+    [HttpPost("create")]
+    public async Task<IActionResult> CreateAlgorithm ([FromBody] CreateAlgorithmDto dto)
+    {
+        try
+        {
+            using var conn = (NpgsqlConnection)_context.Database.GetDbConnection();
+            await conn.OpenAsync();
+            using var cmd = new NpgsqlCommand("CALL sp_create_algorithm(@p_title, @p_description, @p_isprivate, @p_userid );", conn);
+            cmd.Parameters.AddWithValue("p_title", dto.algorithm_title);
+            cmd.Parameters.AddWithValue("p_description", dto.algorithm_description);
+            cmd.Parameters.AddWithValue("p_isprivate", dto.algorithm_isprivate);
+            cmd.Parameters.AddWithValue("p_userid", dto.dbuser_id);
+            await cmd.ExecuteNonQueryAsync();
+            return Ok(new { message = "User created successfully" });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = ex.Message });
+        }
+    } 
+    
 }
