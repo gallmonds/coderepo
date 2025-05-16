@@ -1,0 +1,6 @@
+@coderepo_api_HostAddress = http://localhost:5131
+
+GET {{coderepo_api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

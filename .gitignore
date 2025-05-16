@@ -4,12 +4,12 @@ frontend/dist/
 frontend/.angular/
 
 # ASP.NET
-api/bin/
-api/obj/
-api/*.db
-api/*.sqlite
-api/appsettings.Development.json
-api/*.user
+api/coderepo_api/bin/*
+api/coderepo_api/obj/*
+api/coderepo_api/*.db
+api/coderepo_api/*.sqlite
+api/coderepo_api/appsettings.Development.json
+api/coderepo_api/*.user
 
 # Sistema
 .DS_Store
