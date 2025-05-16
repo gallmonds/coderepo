@@ -1,0 +1,12 @@
+INSERT INTO supportedlang(lang_name, icon_id, version) VALUES ('C', 1, 1);
+INSERT INTO supportedlang(lang_name, icon_id, version) VALUES ('C++', 2, 1);
+INSERT INTO supportedlang(lang_name, icon_id, version) VALUES ('C#', 3, 1);
+INSERT INTO supportedlang(lang_name, icon_id, version) VALUES ('Go', 4, 1);
+INSERT INTO supportedlang(lang_name, icon_id, version) VALUES ('Java', 5, 1);
+INSERT INTO supportedlang(lang_name, icon_id, version) VALUES ('JavaScript', 6, 1);
+INSERT INTO supportedlang(lang_name, icon_id, version) VALUES ('Lua', 7, 1);
+INSERT INTO supportedlang(lang_name, icon_id, version) VALUES ('Perl', 8, 1);
+INSERT INTO supportedlang(lang_name, icon_id, version) VALUES ('Python', 9, 1);
+INSERT INTO supportedlang(lang_name, icon_id, version) VALUES ('Ruby', 10, 1);
+INSERT INTO supportedlang(lang_name, icon_id, version) VALUES ('Rust', 11, 1);
+INSERT INTO supportedlang(lang_name, icon_id, version) VALUES ('Swift', 12, 1);
