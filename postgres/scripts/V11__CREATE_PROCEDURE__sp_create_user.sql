@@ -10,7 +10,7 @@ DECLARE
     user_count INT;
 BEGIN
     SELECT COUNT(*) INTO user_count
-    FROM users
+    FROM dbuser
     WHERE username = username;
     
     IF user_count > 0 THEN
@@ -18,7 +18,7 @@ BEGIN
     END IF;
 
     SELECT COUNT(*) INTO user_count
-    FROM users
+    FROM dbuser
     WHERE email = email;
     
     IF user_count > 0 THEN
