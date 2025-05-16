@@ -3,17 +3,13 @@ using System.Text;
 
 public static class PasswordUtil
 {
-    public static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+    public static void CreatePasswordHash(string password, out string passwordHash, out string passwordSalt)
     {
         using var hmac = new HMACSHA512();
-	    passwordSalt = hmac.Key;
-	    passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-    }
+	    var saltBytes = hmac.Key;
+	    var hashBytes = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
 
-    public static bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
-    {
-        using var hmac = new HMACSHA512(storedSalt);
-        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-        return computedHash.SequenceEqual(storedHash);
+        passwordSalt = Convert.ToBase64String(saltBytes);
+        passwordHash = Convert.ToBase64String(hashBytes);
     }
 }

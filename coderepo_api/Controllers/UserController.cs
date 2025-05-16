@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using coderepo_api.Data;
 using coderepo_api.Models;
 using Npgsql;
+using Microsoft.AspNetCore.Identity;
+using coderepo_api.Dtos;
 
 namespace coderepo_api.Controllers;
 
@@ -38,6 +40,25 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
-    
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(CreateUserRequestDto request)
+    {
+        PasswordUtil.CreatePasswordHash(request.Password, out string hash, out string salt);
+
+        var parameters = new[]
+        {
+        new Npgsql.NpgsqlParameter("@username", request.Username),
+        new Npgsql.NpgsqlParameter("@email", request.Email),
+        new Npgsql.NpgsqlParameter("@password_hash", hash),
+        new Npgsql.NpgsqlParameter("@password_salt", salt)
+        };
+
+        await _context.Database.ExecuteSqlRawAsync(
+            "CALL create_user(@username, @email, @password_hash, @password_salt)", parameters);
+
+        return Ok("User registered successfully.");
+    }
+
+
 
 }
