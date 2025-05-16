@@ -1,0 +1,113 @@
+<div class="bg-gray-900 text-white min-h-screen font-sans">
+  <!-- Header -->
+  <header class="flex items-center justify-between px-4 py-3 border-b border-gray-700">
+    <div class="flex items-center space-x-2">
+      <button class="text-white md:hidden">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <a href="#" class="font-bold text-xl">coderepo.net</a>
+    </div>
+    <input type="text" placeholder="Search for Tags, Users, Sets..." class="bg-gray-800 text-sm px-3 py-2 rounded-lg w-full max-w-md outline-none placeholder-gray-400" />
+    <div class="flex items-center space-x-2">
+      <button class="relative">
+        <span class="absolute -top-1 -right-1 bg-red-500 text-xs rounded-full px-1">20</span>
+        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 100 12 6 6 0 000-12zM2 18a8 8 0 1116 0H2z"/></svg>
+      </button>
+      <img src="https://i.pravatar.cc/32" alt="Avatar" class="rounded-full w-8 h-8" />
+    </div>
+  </header>
+<div class="relative bg-gray-800 p-4 rounded-lg">
+  <!-- Main Content -->
+  <main class="p-4 space-y-4">
+    <!-- Title -->
+    <div class="space-y-1">
+      <div class="text-sm text-gray-400">John Doe &gt; Codelets &gt; Lorem Ipsum</div>
+      <h1 class="text-xl font-bold flex items-center">
+        Lorem Ipsum
+        <svg class="w-4 h-4 text-blue-500 ml-2" fill="currentColor" viewBox="0 0 24 24"><path d="M9.75 2.25A7.5 7.5 0 1017.5 9.75 7.508 7.508 0 009.75 2.25zm0 13.5a6 6 0 116-6 6.006 6.006 0 01-6 6z"/><path d="M15.75 14.25a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5a.75.75 0 01-.75-.75z"/></svg>
+      </h1>
+      <p class="text-sm text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+    </div>
+
+    <!-- Options -->
+    <div class="flex space-x-4 items-center">
+      <button class="bg-gray-700 px-4 py-1 rounded">Raw</button>
+      <button class="bg-gray-700 px-4 py-1 rounded">Web</button>
+      <button class="ml-auto text-green-400 text-sm hover:underline">⭐ Rate this Codelet!</button>
+    </div>
+
+    <!-- Code Section -->
+    <div class="bg-gray-800 rounded-xl overflow-hidden border border-gray-700">
+      <!-- Tabs -->
+      <div class="flex space-x-4 px-4 py-2 border-b border-gray-700 text-sm">
+        <button class="text-gray-400 hover:text-white">Lua</button>
+        <button class="text-gray-400 hover:text-white">JS</button>
+        <button class="text-white font-bold">Python</button>
+        <!-- Botón copiar -->
+        <button (click)="copyCode()" class="ml-auto bg-gray-700 hover:bg-gray-600 text-white text-xs px-2 py-1 rounded-bl-lg rounded-tr-lg">{{ copyButtonText }}</button>
+      </div>
+
+      <!-- Code Block -->
+    <pre #codeBlock class="bg-gray-900 text-green-400 text-xs font-mono p-3 pt-8 rounded overflow-x-auto whitespace-pre">
+<span class="text-purple-400">number</span> = coderepo.web.numvar
+<span class="text-blue-400">if</span> number.isdigit():
+    number = <span class="text-blue-400">int</span>(number)
+<span class="text-blue-400">if</span> number % 2 == 0:
+    coderepo.web.res("Number is even")
+<span class="text-blue-400">else</span>:
+    coderepo.web.res("Number is odd") 
+<span class="text-blue-400">else</span>:
+    coderepo.web.res("Not a valid number")
+    </pre>
+      <!-- Buttons -->
+      <div class="flex items-center px-4 py-2 border-t border-gray-700 text-sm text-gray-400">
+        <button class="hover:underline">🕓 Version History</button>
+        <button class="ml-4 hover:underline">📄 Docs</button>
+        <button class="ml-4 hover:underline">🤝 Collaborate</button>
+
+      </div>
+    </div>
+
+    <!-- Comments -->
+    <div class="space-y-3 mt-6">
+      <div class="text-sm text-gray-400">You need to be logged in to comment. <a href="/login" class="text-blue-400 hover:underline">Log In</a></div>
+
+      <!-- Individual Comment -->
+      <div class="space-y-4">
+        <div class="bg-gray-800 p-3 rounded-lg border border-gray-700">
+          <div class="flex justify-between items-center text-sm">
+            <span class="font-bold text-white">Abraham Lincoln</span>
+            <span class="text-gray-500">3 days ago</span>
+          </div>
+          <p class="text-sm mt-2 text-gray-300">This changed my life omg. Can’t wait to use it on my code.</p>
+          <div class="mt-2 flex space-x-4 text-xs text-gray-400">
+            <span>👍 612</span>
+            <a href="#" class="hover:underline">Reply</a>
+          </div>
+        </div>
+
+        <div class="bg-gray-800 p-3 rounded-lg border border-gray-700">
+          <div class="flex justify-between items-center text-sm">
+            <span class="font-bold text-white flex items-center">John Doe <span class="ml-2 text-xs bg-gray-600 px-2 rounded">author</span></span>
+            <span class="text-gray-500">2 days ago</span>
+          </div>
+          <p class="text-sm mt-2 text-gray-300">Tysm bro! I just saw your Codelets and they are pretty good! :)</p>
+          <div class="mt-2 flex space-x-4 text-xs text-gray-400">
+            <span>👍 94</span>
+            <a href="#" class="hover:underline">Reply</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- More Comments -->
+      <button class="text-sm text-blue-400 hover:underline">See more of John Doe</button>
+    </div>
+  </main>
+</div>
+</div>
+<!-- Footer --> 
+<footer class="bg-gray-800 text-gray-400 py-4">
+  <div class="container mx-auto text-center">
+    <p>&copy; 2025 coderepo.com. All rights reserved.</p>
+  </div>
+</footer>

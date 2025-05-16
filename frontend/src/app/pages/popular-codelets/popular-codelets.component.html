@@ -1,0 +1,142 @@
+<div class="flex flex-col h-screen bg-gray-900 text-white">
+    
+  <!-- Welcome -->
+  <div class="px-4 mt-4">
+    <h1 class="text-lg font-bold">Popular Codelets</h1>
+    <!-- <p class="text-sm text-gray-400">Feeling inspired? <a href="#" class="text-blue-400 underline">Create a Codelet</a></p> -->
+  </div>
+
+  <!-- Search Bar -->
+  <div class="px-4 mt-4">
+    <input type="text" placeholder="Search for Tags, Users, Sets or a Codelet..."
+           class="w-full px-4 py-2 bg-gray-800 rounded-lg text-white placeholder-gray-400 focus:outline-none">
+  </div>
+
+  <!-- Popular Codelets -->
+  <div class="px-4 mt-6 flex-1 overflow-y-auto">
+
+
+    <!-- Card Component (puedes convertir esto en un componente si usas JS o frameworks) -->
+    <div class="space-y-4">
+      <!-- Card 1 -->
+<div class="bg-gray-800 p-4 rounded-lg">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-2">
+      <img src="https://placehold.co/32x32" class="w-6 h-6 rounded-full" alt="">
+      <span class="text-white">Cooldude420</span>
+    </div>
+    <div class="text-sm text-gray-400">0 📄 | 0 ⭐</div>
+  </div>
+
+  <h3 class="text-white font-bold mt-2">Lorem Ipsum</h3>
+  <p class="text-sm text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+
+  <!-- Contenedor del código -->
+  <div class="relative mt-2">
+    <!-- Lenguaje -->
+    <div class="absolute top-0 left-0 bg-gray-700 text-xs text-white px-2 py-1 rounded-tr-lg rounded-bl-lg font-mono">
+      Python
+    </div>
+
+    <!-- Botón copiar -->
+    <button (click)="copyCode()" class="absolute top-0 right-0 bg-gray-700 hover:bg-gray-600 text-white text-xs px-2 py-1 rounded-bl-lg rounded-tr-lg">
+      {{ copyButtonText }}
+    </button>
+
+    <!-- Vista previa de código -->
+    <pre #codeBlock class="bg-gray-900 text-green-400 text-xs font-mono p-3 pt-8 rounded overflow-x-auto whitespace-pre">
+<span class="text-purple-400">number</span> = coderepo.web.numvar
+<span class="text-blue-400">if</span> number.isdigit():
+    number = <span class="text-blue-400">int</span>(number)
+<span class="text-blue-400">if</span> number % 2 == 0:
+    coderepo.web.res("Number is even")
+<span class="text-blue-400">else</span>:
+    coderepo.web.res("Number is odd") 
+<span class="text-blue-400">else</span>:
+    coderepo.web.res("Not a valid number")
+    </pre>
+  </div>
+
+  <p class="text-xs text-green-400 mt-2">✓ Executable in website</p>
+</div>
+
+      <!-- Card 2 al 5 (copia del mismo formato) -->
+      <div class="bg-gray-800 p-4 rounded-lg">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <img src="https://placehold.co/32x32" class="w-6 h-6 rounded-full" alt="">
+            <span>Ironman98</span>
+          </div>
+          <div class="text-sm text-gray-400">12 📄 | 106 ⭐</div>
+        </div>
+        <h3 class="text-white font-bold mt-2">Sample Text</h3>
+        <p class="text-sm text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+        <p class="text-xs text-green-400 mt-2">✓ Executable in website</p>
+      </div>
+
+      <!-- Puedes repetir los card según los datos -->
+      <!-- Card 3 -->
+      <div class="bg-gray-800 p-4 rounded-lg">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <img src="https://placehold.co/32x32" class="w-6 h-6 rounded-full" alt="">
+            <span>Ironman98</span>
+          </div>
+          <div class="text-sm text-gray-400">12 📄 | 106 ⭐</div>
+        </div>
+        <h3 class="text-white font-bold mt-2">Sample Text</h3>
+        <p class="text-sm text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+        <p class="text-xs text-green-400 mt-2">✓ Executable in website</p>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="bg-gray-800 p-4 rounded-lg">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <img src="https://placehold.co/32x32" class="w-6 h-6 rounded-full" alt="">
+            <span>Ironman98</span>
+          </div>
+          <div class="text-sm text-gray-400">12 📄 | 106 ⭐</div>
+        </div>
+        <h3 class="text-white font-bold mt-2">Sample Text</h3>
+        <p class="text-sm text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+        <p class="text-xs text-green-400 mt-2">✓ Executable in website</p>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="bg-gray-800 p-4 rounded-lg">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <img src="https://placehold.co/32x32" class="w-6 h-6 rounded-full" alt="">
+            <span>Ironman98</span>
+          </div>
+          <div class="text-sm text-gray-400">12 📄 | 106 ⭐</div>
+        </div>
+        <h3 class="text-white font-bold mt-2">Sample Text</h3>
+        <p class="text-sm text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+        <p class="text-xs text-green-400 mt-2">✓ Executable in website</p>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="w-full mt-6 flex justify-center items-center space-x-2">
+      <!-- Botón Anterior -->
+      <button class="px-3 py-1 bg-gray-700 text-white rounded-lg disabled:opacity-50" disabled>
+        &laquo;
+      </button>
+
+      <!-- Números de página -->
+      <button class="px-3 py-1 bg-gray-700 text-white rounded-lg">1</button>
+      <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded-lg">2</button>
+      <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded-lg">3</button>
+      <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded-lg">4</button>
+      <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded-lg">5</button>
+
+      <!-- Botón Siguiente -->
+      <button class="px-3 py-1 bg-gray-700 text-white rounded-lg">
+        &raquo;
+      </button>
+    </div>
+
+  </div>
+</div>
