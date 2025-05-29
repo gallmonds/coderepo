@@ -1,4 +1,14 @@
 services:
+  api:
+    build:
+      context: ./coderepo_api/
+      dockerfile: Dockerfile
+    ports:
+      - "5131:5131"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - postgresql
   postgresql:
     build:
       context: ./postgres
