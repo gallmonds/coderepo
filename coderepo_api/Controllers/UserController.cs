@@ -1,64 +1,46 @@
+﻿using coderepo_api.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using coderepo_api.Data;
-using coderepo_api.Models;
-using Npgsql;
-using Microsoft.AspNetCore.Identity;
-using coderepo_api.Dtos;
+using System.Security.Claims;
 
-namespace coderepo_api.Controllers;
-
-[ApiController]
-[Route("api/user")]
-
-public class UserController : ControllerBase
+namespace coderepo_api.Controllers
 {
-    private readonly AppDbContext _context;
-    public UserController(AppDbContext context)
+    [ApiController]
+    [Route("api/user")]
+    public class UserController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly IUserRepository _userRepository;
 
-    /*GET ALL USER*/
-    [HttpGet]
-    public async Task<IActionResult> GetUsers()
-    {
-        var user = await _context.Users.ToListAsync();
-        return Ok(user);
-    }
-
-    /*GET USER BY ID*/
-
-    [HttpGet("{user_id}")]
-    public async Task<IActionResult> GetUsersById(int user_id)
-    {
-        var user = await _context.Users.FindAsync(user_id);
-        if (user == null)
+        public UserController(IUserRepository userRepository)
         {
-            return NotFound();
+            _userRepository = userRepository;
         }
-        return Ok(user);
-    }
 
-    [HttpPost("register")]
-    public async Task<IActionResult> Register(CreateUserRequestDto request)
-    {
-        PasswordUtil.CreatePasswordHash(request.Password, out string hash, out string salt);
-
-        var parameters = new[]
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<IActionResult> GetMyUserData()
         {
-        new Npgsql.NpgsqlParameter("@username", request.Username),
-        new Npgsql.NpgsqlParameter("@email", request.Email),
-        new Npgsql.NpgsqlParameter("@password_hash", hash),
-        new Npgsql.NpgsqlParameter("@password_salt", salt)
-        };
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier) ?? User.FindFirst("sub");
+            if (userIdClaim == null)
+                return Unauthorized("No user id in token.");
 
-        await _context.Database.ExecuteSqlRawAsync(
-            "CALL create_user(@username, @email, @password_hash, @password_salt)", parameters);
+            if (!int.TryParse(userIdClaim.Value, out int userId))
+                return BadRequest("Invalid user id in token.");
 
-        return Ok("User registered successfully.");
+            var user = await _userRepository.GetById(userId);
+            if (user == null)
+                return NotFound("User not found.");
+
+            return Ok(new
+            {
+                user.user_id,
+                user.username,
+                user.email,
+                user.pfp_id,
+                user.isflagged,
+                user.isbanned,
+                user.audit_isdeleted
+            });
+        }
     }
-
-
-
 }
