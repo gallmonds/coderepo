@@ -1,4 +1,7 @@
+using coderepo_api.Interfaces;
 using coderepo_api.Repository;
+using coderepo_api.Repository.Algorithm;
+using coderepo_api.Services;
 using coderepo_api.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -34,8 +37,12 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<JwtUtils>();
+builder.Services.AddScoped<IAlgorithmRepository, AlgorithmRepository>();
 
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<IFileRepository, FileRepository>();
+builder.Services.AddScoped<IFileService, FileService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));

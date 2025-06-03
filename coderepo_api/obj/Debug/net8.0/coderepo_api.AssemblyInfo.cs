@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("coderepo_api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cb4babdcd7c1f1b340f129054429ea3a638a2bf1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d1e0829a57fb55ab9cb0ad3bfdc964011fb41812")]
 [assembly: System.Reflection.AssemblyProductAttribute("coderepo_api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("coderepo_api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -22,6 +22,8 @@ namespace coderepo_api.Utils
 
             var claims = new[]
             {
+                new Claim(ClaimTypes.NameIdentifier, user.user_id.ToString()),
+                new Claim(ClaimTypes.Name, user.username),
                 new Claim(JwtRegisteredClaimNames.Sub, user.user_id.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, user.username),
                 new Claim(JwtRegisteredClaimNames.Email, user.email)

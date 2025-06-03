@@ -7,6 +7,8 @@ public class AppDbContext : DbContext
         : base(options) { }
 
     public DbSet<AppUser> Users => Set<AppUser>();
+    public DbSet<Algorithm> Algorithms { get; set; }
+    public DbSet<AlgorithmMeta> AlgorithmMeta { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -21,5 +23,17 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<AppUser>()
             .HasIndex(u => u.email)
             .IsUnique();
+
+        modelBuilder.Entity<Algorithm>()
+            .ToTable("algorithm")
+            .HasKey(a => a.algorithm_id);
+
+        modelBuilder.Entity<AlgorithmMeta>()
+            .ToTable("algorithm_meta")
+            .HasKey(am => am.algorithm_id);
+        modelBuilder.Entity<AlgorithmMeta>()
+            .Property(a => a.created_at)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            .ValueGeneratedOnAdd();
     }
 }
