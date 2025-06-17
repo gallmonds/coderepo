@@ -30,3 +30,7 @@ Thumbs.db
 
 # Postgres
 postgres/data
+/coderepo_api/bin/Debug/net8.0
+/coderepo_api/obj
+/coderepo_api/.vs/coderepo_api
+/.vs
