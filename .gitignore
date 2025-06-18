@@ -34,3 +34,4 @@ postgres/data
 /coderepo_api/obj
 /coderepo_api/.vs/coderepo_api
 /.vs
+/coderepo_api/.vs/
