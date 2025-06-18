@@ -3,13 +3,13 @@ frontend/node_modules/
 frontend/dist/
 frontend/.angular/
 
-# ASP.NET
-api/coderepo_api/bin/*
-api/coderepo_api/obj/*
-api/coderepo_api/*.db
-api/coderepo_api/*.sqlite
-api/coderepo_api/appsettings.Development.json
-api/coderepo_api/*.user
+# ASP.NET (coderepo_api)
+coderepo_api/bin/
+coderepo_api/obj/
+coderepo_api/*.db
+coderepo_api/*.sqlite
+coderepo_api/appsettings.Development.json
+coderepo_api/*.user
 
 # Sistema
 .DS_Store
@@ -28,9 +28,13 @@ Thumbs.db
 *.userosscache
 *.sln.docstates
 
-# Postgres
+# Visual Studio
+coderepo_api/.vs/
+.vs/
+
+# PostgreSQL
 postgres/data
-/coderepo_api/bin/Debug/net8.0
-/coderepo_api/obj
-/coderepo_api/.vs/coderepo_api
-/.vs
+
+# .NET
+coderepo_api/bin/Debug/net8.0/
+coderepo_api/obj/
