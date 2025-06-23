@@ -1,0 +1,41 @@
+<div class="bg-gray-900 text-white min-h-screen p-6">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="flex items-center space-x-4 mb-6">
+      <img [src]="user.avatar" alt="Avatar" class="w-20 h-20 rounded-full">
+      <div>
+        <h1 class="text-2xl font-bold">{{ user.username }}</h1>
+        <p class="text-gray-400 text-sm">My profile</p>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form (ngSubmit)="updateProfile()" class="space-y-4">
+      <div>
+        <label class="block text-sm mb-1">Email</label>
+        <input type="email" [(ngModel)]="user.email" name="email" class="w-full bg-gray-800 px-4 py-2 rounded border border-gray-700" />
+      </div>
+
+      <div>
+        <label class="block text-sm mb-1">New Password</label>
+        <input type="password" [(ngModel)]="password" name="password" class="w-full bg-gray-800 px-4 py-2 rounded border border-gray-700" />
+      </div>
+
+      <div>
+        <label class="block text-sm mb-1">Confirm New Password</label>
+        <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" class="w-full bg-gray-800 px-4 py-2 rounded border border-gray-700" />
+      </div>
+
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded text-white">Update</button>
+    </form>
+
+    <!-- My Codelets -->
+    <div class="mt-10">
+      <h2 class="text-xl font-bold mb-4">My Codelets</h2>
+      <div *ngFor="let codelet of myCodelets" class="bg-gray-800 p-4 rounded mb-3 border border-gray-700">
+        <h3 class="text-lg font-semibold">{{ codelet.title }}</h3>
+        <p class="text-sm text-gray-400">Created on {{ codelet.createdAt }}</p>
+      </div>
+    </div>
+  </div>
+</div>

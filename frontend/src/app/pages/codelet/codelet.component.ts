@@ -1,15 +1,18 @@
 import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
 import { NgIf, NgFor, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HeaderComponent } from '../../shared/header/header.component';
+import { FooterComponent } from '../../shared/footer/footer.component';
 
 @Component({
   selector: 'app-codelet',
   standalone: true,
-  imports: [NgIf, NgFor, NgClass, FormsModule],
+  imports: [NgIf, NgFor, NgClass, FormsModule, HeaderComponent, FooterComponent],
   templateUrl: './codelet.component.html',
   styleUrl: './codelet.component.css'
 })
 export class CodeletComponent implements OnInit {
+  codeletId = 1;
   copyButtonText = '📋 Copy';
   rating = 0;
   isDocsModalOpen = false;

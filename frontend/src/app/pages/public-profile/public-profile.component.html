@@ -1,0 +1,22 @@
+<div class="bg-gray-900 text-white min-h-screen p-6">
+  <div class="max-w-4xl mx-auto">
+    <!-- Profile Header -->
+    <div class="flex items-center space-x-4 mb-6">
+      <img [src]="user.avatar" alt="Avatar" class="w-20 h-20 rounded-full">
+      <div>
+        <h1 class="text-2xl font-bold">{{ user.username }}</h1>
+        <p class="text-sm text-gray-400">{{ user.bio }}</p>
+        <p class="text-xs text-gray-500 mt-1">Joined on {{ user.joined }}</p>
+      </div>
+    </div>
+
+    <!-- Public Codelets -->
+    <div>
+      <h2 class="text-xl font-bold mb-4">Codelets by {{ user.username }}</h2>
+      <div *ngFor="let codelet of userCodelets" class="bg-gray-800 p-4 rounded mb-3 border border-gray-700">
+        <h3 class="text-lg font-semibold">{{ codelet.title }}</h3>
+        <p class="text-sm text-gray-400">Created on {{ codelet.createdAt }}</p>
+      </div>
+    </div>
+  </div>
+</div>
