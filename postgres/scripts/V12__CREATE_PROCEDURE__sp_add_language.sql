@@ -24,8 +24,8 @@ BEGIN
             ) THEN
                 SELECT COUNT(*) + 1
                 INTO v_versionnumber
-                FROM algorithm_lang algl
-                WHERE algl.algorithm_id = p_algorithm_id;
+                FROM algorithm_changelog
+                WHERE algorithm_id = p_algorithm_id AND lang_id = p_supportedlang_id;
 				
 				SELECT lang_extension
 				INTO v_langextension

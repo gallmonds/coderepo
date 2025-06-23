@@ -21,11 +21,10 @@ namespace coderepo_api.Controllers
             _fileRepository = filerepository;
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateAlgorithm(CreateAlgorithmDto dto)
         {
             int userId = User.GetUserId();
-
 
             var result = await _repository.CreateAlgorithm(dto, userId);
             if (result == null)
@@ -35,5 +34,46 @@ namespace coderepo_api.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("addlang")]
+        public async Task<IActionResult> AddLanguage([FromForm] AddLanguageFormDto form)
+        {
+            int userId = User.GetUserId();
+
+            var dto = new AddLanguageDto
+            {
+                p_algorithm_id = form.AlgorithmId,
+                p_supportedlang_id = form.SupportedLangId,
+                p_dbuser_id = userId
+            };
+
+            var result = await _repository.AddLanguage(dto, userId);
+
+            if (result == null)
+                return StatusCode(403, new { message = "User lacks permission to add languages." });
+
+            if (form.File == null || form.File.Length == 0)
+                return BadRequest(new { message = "No file was uploaded." });
+
+            var filePath = result;
+            //var dirPath = Path.GetDirectoryName(filePath);
+
+            //if (dirPath == null)
+            //    return BadRequest(new { message = "Invalid file path." });
+
+            //dirPath = Path.Combine("codelet/", dirPath);
+            filePath = Path.Combine("/app/static/codelet/", filePath);
+
+            //await _fileRepository.CreateDirectoryAsync(dirPath);
+
+            using (var ms = new MemoryStream())
+            {
+                await form.File.CopyToAsync(ms);
+                await _fileRepository.SaveFileAsync(filePath, ms.ToArray());
+            }
+
+            return Ok(new { path = filePath });
+        }
+
     }
 }

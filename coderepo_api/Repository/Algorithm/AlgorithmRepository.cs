@@ -1,6 +1,8 @@
 ﻿using coderepo_api.Dtos;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using System.IO;
+
 
 namespace coderepo_api.Repository.Algorithm
 {
@@ -39,6 +41,41 @@ namespace coderepo_api.Repository.Algorithm
                 return algorithmMeta.root_path;
             }
             catch (PostgresException ex) when (ex.SqlState == "PER01")
+            {
+                return null;
+            }
+        }
+
+        public async Task<string?> AddLanguage(AddLanguageDto dto, int userId)
+        {
+            try
+            {
+                await _context.Database.ExecuteSqlRawAsync(
+                    "CALL sp_add_language({0}, {1}, {2})",
+                    dto.p_algorithm_id, dto.p_dbuser_id, dto.p_supportedlang_id);
+
+                var newLang = await _context.AlgorithmLangs
+                    .Where(l => l.algorithm_id == dto.p_algorithm_id && l.lang_id == dto.p_supportedlang_id)
+                    .OrderByDescending(l => l.created_at)
+                    .FirstOrDefaultAsync();
+                if (newLang == null)
+                {
+                    return null;
+                }
+
+                var algorithmChangelog = await _context.AlgorithmChangelogs
+                    .Where(c => c.algorithm_id == dto.p_algorithm_id)
+                    .OrderByDescending(c => c.created_at)
+                    .FirstOrDefaultAsync();
+                
+                if (algorithmChangelog == null)
+                {
+                    return null;
+                }
+
+                return algorithmChangelog.file_path;
+            }
+            catch (PostgresException ex)
             {
                 return null;
             }
