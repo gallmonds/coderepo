@@ -75,5 +75,42 @@ namespace coderepo_api.Controllers
             return Ok(new { path = filePath });
         }
 
+        [HttpPost("rate")]
+        public async Task<IActionResult> RateAlgorithm(RateAlgorithmFormDto formdto)
+        {
+            int userId = User.GetUserId();
+
+            var dto = new RateContentDto
+            {
+                ContentId = formdto.AlgorithmId,
+                TypeId = 2,
+                UserId = userId
+            };
+
+            var result = await _repository.RateAlgorithm(dto);
+
+            if (!result)
+                return StatusCode(403, new { message = "User lacks permission to rate algorithms." });
+
+            return Ok(new { message = "Submitted." });
+        }
+
+        [HttpPost("comment")]
+        public async Task<IActionResult> CommentAlgorithm(CommentAlgorithmDto)
+        {
+            int userId = User.GetUserId();
+            var dto = new CommentAlgorithmDto
+            {
+                ContentId = formdto.AlgorithmId,
+                TypeId = 2,
+                UserId = userId,
+                Comment = formdto.Comment
+            };
+            var result = await _repository.CommentAlgorithm(dto);
+            if (!result)
+                return StatusCode(403, new { message = "User lacks permission to comment on algorithms." });
+            return Ok(new { message = "Comment submitted." });
+        }
+
     }
 }

@@ -67,7 +67,7 @@ namespace coderepo_api.Repository.Algorithm
                     .Where(c => c.algorithm_id == dto.p_algorithm_id)
                     .OrderByDescending(c => c.created_at)
                     .FirstOrDefaultAsync();
-                
+
                 if (algorithmChangelog == null)
                 {
                     return null;
@@ -81,5 +81,32 @@ namespace coderepo_api.Repository.Algorithm
             }
         }
 
-    }
+        public async Task<bool> RateAlgorithm(RateContentDto dto)
+        {
+            try
+            {
+                await _context.Database.ExecuteSqlRawAsync(
+                "CALL sp_rate_content({0}, {1}, {2})",
+                dto.ContentId, dto.UserId, dto.TypeId);
+                return true;
+            }
+            catch (PostgresException)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> CommentAlgorithm(CommentAlgorithmDto dto, int userId)
+        {
+            try { 
+                await _context.Database.ExecuteSqlRawAsync(
+                    "CALL sp_comment_algorithm({0}, {1}, {2}, {3})",
+                    dto.ContentId, userId, dto.Body, dto.ReplyToId);
+                return true;
+            }
+            catch (PostgresException)
+            {
+                return false;
+            }
+        }
 }
