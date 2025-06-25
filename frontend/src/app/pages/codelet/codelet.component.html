@@ -1,0 +1,92 @@
+<app-header></app-header>
+  
+  <div class="bg-gray-900 text-white min-h-screen font-sans">
+    <div class="min-h-screen bg-gray-900 flex justify-center p-6">
+      <div class="max-w-3xl w-full bg-gray-800 rounded-xl shadow-lg p-10">
+        
+        <!-- Title and Author -->
+        <div class="space-y-1">
+          <div class="text-sm text-gray-400">
+            <a href="/profile/johndoe" class="hover:underline text-blue-400">John Doe</a> &gt; Codelets &gt; Lorem Ipsum
+          </div>
+        <h1 class="text-xl font-bold flex items-center">
+          Lorem Ipsum
+        </h1>
+        <p class="text-sm text-gray-400">This codelet validates if a value is numeric and checks its parity.</p>
+      </div>
+      
+      <!-- Upload in other language and rating -->
+      <div class="flex space-x-4 items-center mt-4">
+        <button (click)="uploadInOtherLanguage()" class="bg-gray-700 px-4 py-1 rounded text-sm">Upload in another language</button>
+        <div class="ml-auto flex space-x-1 text-yellow-400 text-xl">
+          <span
+          *ngFor="let star of [1, 2, 3, 4, 5]"
+          (click)="setRating(star)"
+          class="oi oi-star cursor-pointer"
+          [ngClass]="rating >= star ? 'text-yellow-400' : 'text-gray-500'"
+          ></span> 
+        </div>
+      </div>
+      
+      
+      <!-- Dynamic language list -->
+      <div class="text-sm mt-4">
+        <label class="text-gray-300 block mb-1">Available Languages</label>
+        <select class="bg-gray-800 text-white px-3 py-2 rounded w-full" [(ngModel)]="selectedLanguage">
+          <option *ngFor="let lang of availableLanguages" [value]="lang">{{ lang }}</option>
+        </select>
+      </div>
+      
+      <!-- Code block -->
+      <div class="bg-gray-800 rounded-xl overflow-hidden border border-gray-700 mt-4">
+        <div class="flex space-x-4 px-4 py-2 border-b border-gray-700 text-sm">
+          <span class="text-white font-semibold">{{ selectedLanguage }}</span>
+          <button (click)="copyCode()" class="ml-auto bg-gray-700 hover:bg-gray-600 text-white text-xs px-2 py-1 rounded-bl-lg rounded-tr-lg">
+            {{ copyButtonText }}
+          </button>
+        </div>
+        <pre #codeBlock class="bg-gray-900 text-green-400 text-xs font-mono p-3 pt-8 overflow-x-auto whitespace-pre">{{ currentCode }}</pre>
+        <div class="flex items-center px-4 py-2 border-t border-gray-700 text-sm text-gray-400">
+          <button (click)="toggleDocsModal()" class="ml-4 hover:underline">📄 Docs</button>
+        </div>
+      </div>
+      
+      <!-- Docs Modal -->
+      <div #docsModal class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50">
+        <div class="bg-gray-800 p-6 rounded-lg max-w-xl w-full">
+          <h2 class="text-lg font-bold mb-4">Documentation</h2>
+          <p class="text-sm text-gray-300">
+            This section contains explanations, usage examples, and relevant instructions about the codelet.
+          </p>
+          <button (click)="toggleDocsModal()" class="mt-4 px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">Close</button>
+        </div>
+      </div>
+      
+      <!-- Comments -->
+      <div class="space-y-3 mt-6" *ngIf="!loggedIn">
+        <div class="text-sm text-gray-400">
+          You need to be logged in to comment. <a href="/login" class="text-blue-400 hover:underline">Log In</a>
+        </div>
+      </div>
+      
+      <div class="space-y-4 mt-4" *ngIf="loggedIn">
+        <div class="flex items-start space-x-3">
+          <img src="https://i.pravatar.cc/32" class="rounded-full w-8 h-8" alt="Avatar" />
+          <div class="bg-gray-700 p-3 rounded-lg w-full">
+            <p class="text-sm font-semibold">juan_code</p>
+            <p class="text-sm text-gray-300">Nice snippet! I adapted it to Ruby.</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-3">
+          <img src="https://i.pravatar.cc/33" class="rounded-full w-8 h-8" alt="Avatar" />
+          <div class="bg-gray-700 p-3 rounded-lg w-full">
+            <p class="text-sm font-semibold">sofia_dev</p>
+            <p class="text-sm text-gray-300">Thanks for sharing, this was very helpful for input validation!</p>
+          </div>
+        </div>
+      </div> 
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

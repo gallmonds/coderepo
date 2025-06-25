@@ -1,176 +1,81 @@
-<!-- Codelet Upload View | coderepo.net
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Create a Codelet • coderepo.net</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-  </head>
-  <body class="bg-gray-900 text-white font-sans">
-
-     Navbar
-    <nav class="flex items-center justify-between px-4 py-3 bg-gray-800 shadow-sm">
-      <div class="flex items-center space-x-2">
-        <button
-          aria-label="Toggle menu"
-          class="text-white focus:outline-none focus:ring-2 focus:ring-blue-300 rounded-md"
-        >
-          &#9776;
-        </button>
-        <a href="#" class="text-xl font-bold">coderepo.net</a>
-      </div>
-      <div class="flex items-center space-x-4">
-        <button
-          class="relative focus:outline-none focus:ring-2 focus:ring-blue-300 rounded-full"
-          aria-label="Notifications"
-        >
-          <span class="absolute -top-1 -right-1 flex h-3 w-3">
-            <span
-              class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-300 opacity-75"
-            ></span>
-            <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-          </span>
-          🔔
-        </button>
-        <img
-          src="https://placehold.co/32x32"
-          class="w-8 h-8 rounded-full border border-gray-700"
-          alt="Profile"
-        />
-      </div>
-    </nav>-->
 <div class="min-h-screen bg-gray-900 flex justify-center p-6">
-  <div class="max-w-3xl w-full bg-gray-800 rounded-xl shadow-lg p-10">
+  <div class="max-w-2xl w-full bg-gray-800 rounded-xl shadow-lg p-10">
     <h1 class="text-2xl font-semibold text-gray-300 mb-6">Create a New Codelet</h1>
 
-      <!-- Form Card -->
-      <form
-        action="#"
-        method="POST"
-        class="bg-gray-800 p-6 rounded-2xl shadow-md space-y-6"
-      >
-        <!-- Title -->
-        <div>
-          <label for="title" class="block text-sm font-medium text-gray-300 mb-1">Title</label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            placeholder="e.g. Quick Sort Implementation"
-            required
-            class="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+    <form (submit)="onSubmit()" class="space-y-6">
+      <div>
+        <label for="title" class="block text-sm text-gray-300 mb-1">Title</label>
+        <input id="title" name="title" [(ngModel)]="title" required
+               class="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-gray-300 rounded-lg"
+               placeholder="e.g. Quick Sort Implementation" />
+      </div>
 
-        <!-- Technology / Language -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label for="language" class="block text-sm font-medium text-gray-300 mb-1">Language</label>
-            <select
-              id="language"
-              name="language"
-              class="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option>Python</option>
-              <option>JavaScript</option>
-              <option>Lua</option>
-              <option>Rust</option>
-              <option>C++</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div>
-            <label for="tech" class="block text-sm font-medium text-gray-300 mb-1">Technology / Framework</label>   
-            <input
-              type="text"
-              id="tech"
-              name="tech"
-              placeholder="e.g. Flask, React, Vanilla JS..."
-              class="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-        </div>
+      <div>
+        <label for="summary" class="block text-sm text-gray-300 mb-1">Short Description</label>
+        <textarea id="summary" name="summary" [(ngModel)]="summary" required rows="3"
+                  class="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-gray-300 rounded-lg resize-none"
+                  placeholder="A brief one-line summary..."></textarea>
+      </div>
 
-        <!-- Summary / Description -->
-        <div>
-          <label for="summary" class="block text-sm font-medium text-gray-300 mb-1">Short Description</label>
-          <textarea
-            id="summary"
-            name="summary"
-            rows="3"
-            placeholder="A brief one‑line summary of what this Codelet does..."
-            class="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-            required
-          ></textarea>
-        </div>
+      <div>
+        <label for="file" class="block text-sm text-gray-300 mb-1">Upload Code File</label>
+        <input
+          id="file"
+          type="file"
+          (change)="onFileSelected($event)"
+          class="px-4 py-2 bg-gray-900 border border-gray-500 text-gray-300 rounded-lg cursor-pointer"
+        />
+      </div>
 
-        <!-- Code Editor -->
-        <div>
-          <label for="code" class="block text-sm font-medium text-gray-300 mb-1">Code</label>
-          <textarea
-            id="code"
-            name="code"
-            rows="12"
-            placeholder="Paste or write your code here..."
-            class="w-full px-4 py-2 font-mono bg-gray-900 border border-gray-700 rounded-lg text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
-            required
-          ></textarea>
-          <p class="text-xs text-gray-300 mt-1">
-            *Syntax highlighting & preview will be applied after publishing.
-          </p>
-        </div>
 
-        <!-- Documentation -->
-        <div>
-          <label for="docs" class="block text-sm font-medium text-gray-300 mb-1">Documentation</label>
-          <textarea
-            id="docs"
-            name="docs"
-            rows="6"
-            placeholder="Explain how to use your Codelet, include examples, references, etc. Markdown supported."
-            class="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
-            required
-          ></textarea>
+      <div>
+        <label class="block text-sm text-gray-300 mb-1">Documentation (Markdown supported)</label>
+        <div class="flex space-x-2 mb-2">
+          <button type="button" (click)="insertMarkdown('**bold**')" class="px-2 py-1 bg-gray-700 rounded text-sm">Bold</button>
+          <button type="button" (click)="insertMarkdown('_italic_')" class="px-2 py-1 bg-gray-700 rounded text-sm">Italic</button>
+          <button type="button" (click)="insertMarkdown('[text](url)')" class="px-2 py-1 bg-gray-700 rounded text-sm">Link</button>
         </div>
+        <textarea id="docs" name="docs" [(ngModel)]="documentation" (input)="updatePreview()" rows="6"
+                  class="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-gray-300 rounded-lg"
+                  placeholder="Markdown content..."></textarea>
+        <div class="mt-2 p-4 bg-gray-700 rounded text-sm" [innerHTML]="markdownPreview | safeHtml"></div>
+      </div>
 
-        <!-- Tags -->
-        <div>
-          <label for="tags" class="block text-sm font-medium text-gray-300 mb-1">Tags</label>
-          <input
-            type="text"
-            id="tags"
-            name="tags"
-            placeholder="e.g. sorting, algorithms, data‑structures"
-            class="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
-
-        <!-- Actions -->
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-          <div class="flex space-x-3">
-            <button
-              type="submit"
-              class="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-300"
-            >
-              Publish Codelet
-            </button>
-            <button
-              type="button"
-              class="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg font-medium text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300"
-            >
-              Preview
-            </button>
-          </div>
-          <a
-            href="#"
-            class="text-sm text-gray-300 underline hover:text-gray-500"
+      <div>
+        <label class="block text-sm text-gray-300 mb-1">Tags</label>
+        <input
+          type="text"
+          (keydown)="handleTagInput($event)"
+          class="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-gray-300 rounded-lg"
+          placeholder="Add a tag and press space"
+        />
+        <div class="mt-2 flex flex-wrap">
+          <span
+            *ngFor="let tag of tags; let i = index"
+            (click)="removeTag(i)"
+            class="inline-flex items-center bg-gray-600 text-white px-3 py-1 rounded mr-2 mb-2 text-sm cursor-pointer hover:bg-red-500 hover:text-white transition"
           >
-            Need help writing good docs?
-          </a>
+            #{{ tag }}
+          </span>
         </div>
-      </form>
-    </div>  
+        <p class="text-xs text-gray-400 mt-1">Click on a tag to remove it.</p>
+      </div>
+
+
+      <div>
+        <label for="collaborators" class="block text-sm text-gray-300 mb-1">Collaborators (by email)</label>
+        <input id="collaborators" name="collaborators" [(ngModel)]="collaborators"
+               class="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-gray-300 rounded-lg"
+               placeholder="email1@example.com, email2@example.com" />
+      </div>
+
+      <div class="flex justify-between items-center">
+        <button type="submit"
+                class="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium text-gray-300">
+          Publish Codelet
+        </button>
+        <a href="#" class="text-sm text-gray-300 underline hover:text-gray-500">Need help writing good docs?</a>
+      </div>
+    </form>
+  </div>
 </div>
