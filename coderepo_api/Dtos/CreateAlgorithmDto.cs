@@ -1,10 +1,9 @@
-namespace coderepo_api.Dtos;
-
-public class CreateAlgorithmDto
+﻿namespace coderepo_api.Dtos
 {
-    public string algorithm_title { get; set; } = string.Empty;
-    public string algorithm_description { get; set; } = string.Empty;
-    public char algorithm_isprivate { get; set; } 
-    public int dbuser_id { get; set; } 
-
+    public class CreateAlgorithmDto
+    {
+        public string Title { get; set; } = null!;
+        public string Description { get; set; } = null!;
+        public bool IsPrivate { get; set; }
+    }
 }
