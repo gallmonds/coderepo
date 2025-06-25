@@ -66,6 +66,8 @@ namespace coderepo_api.Controllers
 
             //await _fileRepository.CreateDirectoryAsync(dirPath);
 
+            //SOY IMPARABLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+
             using (var ms = new MemoryStream())
             {
                 await form.File.CopyToAsync(ms);
@@ -76,18 +78,11 @@ namespace coderepo_api.Controllers
         }
 
         [HttpPost("rate")]
-        public async Task<IActionResult> RateAlgorithm(RateAlgorithmFormDto formdto)
+        public async Task<IActionResult> RateContent(RateContentDto dto)
         {
             int userId = User.GetUserId();
 
-            var dto = new RateContentDto
-            {
-                ContentId = formdto.AlgorithmId,
-                TypeId = 2,
-                UserId = userId
-            };
-
-            var result = await _repository.RateAlgorithm(dto);
+            var result = await _repository.RateContent(dto, userId);
 
             if (!result)
                 return StatusCode(403, new { message = "User lacks permission to rate algorithms." });
@@ -96,21 +91,34 @@ namespace coderepo_api.Controllers
         }
 
         [HttpPost("comment")]
-        public async Task<IActionResult> CommentAlgorithm(CommentAlgorithmDto)
+        public async Task<IActionResult> CommentAlgorithm(CommentAlgorithmDto dto)
         {
             int userId = User.GetUserId();
-            var dto = new CommentAlgorithmDto
-            {
-                ContentId = formdto.AlgorithmId,
-                TypeId = 2,
-                UserId = userId,
-                Comment = formdto.Comment
-            };
-            var result = await _repository.CommentAlgorithm(dto);
+
+            var result = await _repository.CommentAlgorithm(dto, userId);
             if (!result)
                 return StatusCode(403, new { message = "User lacks permission to comment on algorithms." });
             return Ok(new { message = "Comment submitted." });
         }
 
+        [HttpPut("update/{algorithmId}")]
+        public async Task<IActionResult> UpdateAlgorithm(int algorithmId, [FromBody] CreateAlgorithmDto dto)
+        {
+            int userId = User.GetUserId();
+            var result = await _repository.UpdateAlgorithm(dto, userId, algorithmId);
+            if (!result)
+                return StatusCode(403, new { message = "User lacks permission to update algorithms." });
+            return Ok(new { message = "Algorithm updated successfully." });
+        }
+
+        [HttpPut("delete/{algorithmId}")]
+        public async Task<IActionResult> DeleteAlgorithm(int algorithmId)
+        {
+            int userId = User.GetUserId();
+            var result = await _repository.DeleteAlgorithm(algorithmId, userId);
+            if (!result)
+                return StatusCode(403, new { message = "User lacks permission to delete algorithms." });
+            return Ok(new { message = "Algorithm deleted successfully." });
+        }
     }
 }

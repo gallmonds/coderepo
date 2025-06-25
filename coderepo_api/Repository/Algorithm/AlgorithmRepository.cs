@@ -81,13 +81,13 @@ namespace coderepo_api.Repository.Algorithm
             }
         }
 
-        public async Task<bool> RateAlgorithm(RateContentDto dto)
+        public async Task<bool> RateContent(RateContentDto dto, int userId)
         {
             try
             {
                 await _context.Database.ExecuteSqlRawAsync(
                 "CALL sp_rate_content({0}, {1}, {2})",
-                dto.ContentId, dto.UserId, dto.TypeId);
+                dto.ContentId, userId, dto.TypeId);
                 return true;
             }
             catch (PostgresException)
@@ -98,9 +98,10 @@ namespace coderepo_api.Repository.Algorithm
 
         public async Task<bool> CommentAlgorithm(CommentAlgorithmDto dto, int userId)
         {
-            try { 
+            try
+            {
                 await _context.Database.ExecuteSqlRawAsync(
-                    "CALL sp_comment_algorithm({0}, {1}, {2}, {3})",
+                    "CALL sp_comment({0}, {1}, {2}, {3})",
                     dto.ContentId, userId, dto.Body, dto.ReplyToId);
                 return true;
             }
@@ -109,4 +110,37 @@ namespace coderepo_api.Repository.Algorithm
                 return false;
             }
         }
+
+        public async Task<bool> UpdateAlgorithm(CreateAlgorithmDto dto, int userId, int algorithmId)
+        {
+            try
+            {
+                var isPrivateChar = dto.IsPrivate ? '1' : '0';
+
+                await _context.Database.ExecuteSqlRawAsync(
+                    "CALL sp_update_algorithm({0}, {1}, {2}, {3}, {4})",
+                    algorithmId, userId, dto.Title, dto.Description, isPrivateChar);
+                return true;
+            }
+            catch (PostgresException)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteAlgorithm(int algorithmId, int userId)
+        {
+            try
+            {
+                await _context.Database.ExecuteSqlRawAsync(
+                    "CALL sp_delete_algorithm({0}, {1})",
+                    algorithmId, userId);
+                return true;
+            }
+            catch (PostgresException)
+            {
+                return false;
+            }
+        }
+    }
 }

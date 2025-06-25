@@ -6,7 +6,9 @@ namespace coderepo_api.Repository.Algorithm
     {
         Task<string?> CreateAlgorithm(CreateAlgorithmDto dto, int userId);
         Task<string?> AddLanguage(AddLanguageDto dto, int userId);
-        Task<bool> RateAlgorithm(RateContentDto dto);
-        Task<bool> CommentAlgorithm(CommentAlgorithmDto dto);
+        Task<bool> RateContent(RateContentDto dto, int userId);
+        Task<bool> CommentAlgorithm(CommentAlgorithmDto dto, int userId);
+        Task<bool> UpdateAlgorithm(CreateAlgorithmDto dto, int userId, int algorithmId);
+        Task<bool> DeleteAlgorithm(int algorithmId, int userId);
     }
 }

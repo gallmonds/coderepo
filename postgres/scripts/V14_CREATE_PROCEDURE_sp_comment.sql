@@ -29,7 +29,7 @@ BEGIN
 	
 	IF p_replyto_id IS NOT NULL
 	THEN
-		IF NOT EXISTS (SELECT 1 FROM dbuser WHERE user_id = p_replyto_id AND audit_isdeleted != '1'::bpchar) THEN
+		IF NOT EXISTS (SELECT 1 FROM comment WHERE comment_id = p_replyto_id AND audit_isdeleted != '1'::bpchar) THEN
 			RAISE EXCEPTION 'The specified user does not exist.'
         	USING ERRCODE = 'PER03';
 		END IF;
