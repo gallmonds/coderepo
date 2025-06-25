@@ -1,46 +1,107 @@
-<p class="text-blue-900">Esta es la pagina principal, fijate en el codigo que clases tiene. Tienes una lista completa en <a class="underline" href="https://tailwindcss.com/docs/styling-with-utility-classes">la pagina de Tailwind</a>.</p>
+<app-header></app-header>
 
-<br />
-<p class="text-red-800">Esta pagina es la / por defecto, puedes borrar estos contenidos para trabajar sobre el index sin problema.</p>
+<div class="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+<div class="bg-gray-800 text-white font-sans rounded-lg shadow-lg p-6 w-full max-w-3xl mx-auto mt-6">
+  <!-- Welcome -->
+  <div class="px-4 mt-4">
+    <h1 class="text-lg">Welcome back <strong>John Doe!</strong></h1>
+    <p class="text-sm text-gray-400">Feeling inspired? <a href="/create-codelet" class="text-blue-400 underline">Create a Codelet</a></p>
+  </div>
 
-<br />
+  <!-- Popular Codelets -->
+  <div class="px-4 mt-6">
+    <h2 class="text-lg font-semibold">Popular Codelets</h2>
 
-<h2 class="text-green-900">A considerar:</h2>
-<ul>
-    <li>-Angular por defect maneja el tag html asi que no tienes que preocuparte de agregarlo</li>
-    <li>-Te recomiendo usar divs para separar todo en contenedores, y darle ids o clases unicas. Por ejemplo, si tienes un contenedor para una seccion, poner un div, si tienes una seccion dentro de esa seccion, otro div</li>
-    <li>-Los footer, sidebars y navbars son recursos que se utilizan en todas las paginas del sistema menos en login (tal como en el mockup). No tienes que copiar todo el codigo del alguno de los elementos en todas las paginas, puedes reutilizar el codigo.</li>
-    <li>-En ningun momento vas a tener que tocar algun archivo css, si algo no se ve como pretendias, hay que modificar el tailwind</li>
-    <li>-Empieza desde el escritorio nomas, da igual si queda responsive o no</li>
-    <li>-Si estas corriendo el codigo desde docker, deberias poder ver tus cambios en vivo cada que guardas</li>
-    <li>-Si puedes hace un componente de error 404, yo me encargo que dirija alli cuando no encuentre pagina</li>
-</ul>
+    <!-- Codelet Card -->
+    <div class="bg-gray-900 p-4 rounded-lg mt-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <img src="https://placehold.co/32x32" class="w-6 h-6 rounded-full" alt="">
+          <a href="/user/:username">
+            <span>John Doe</span>
+          </a>
+        </div>
+        <div class="text-sm text-gray-400">342 📄 | 2139 ⭐</div>
+      </div>
+      <a href="/codelet">
+        <h3 class="text-white font-bold mt-2">Lorem Ipsum</h3>
+        <p class="text-sm text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+      </a>
+      <div class="flex justify-between items-center mt-3 text-gray-400 text-sm">
+        <div class="flex space-x-3">
+          <button>💬</button>
+          <button>📁</button>
+        </div>
+        <span class="text-xs">+4 more</span>
+      </div>
+    </div>
+    <!-- Another Codelet Card -->
+    <div class="bg-gray-900 p-4 rounded-lg mt-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <img src="https://placehold.co/32x32" class="w-6 h-6 rounded-full" alt="">
+          <a href="/user/:username">
+            <span>Abraham Lincoln</span>
+          </a>
+        </div>
+        <div class="text-sm text-gray-400">212 📄 | 1063 ⭐</div>
+      </div>
+      <a href="/codelet">
+        <h3 class="text-white font-bold mt-2">Sample Text</h3>
+        <p class="text-sm text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+      </a>
+      <div class="flex justify-between items-center mt-3 text-gray-400 text-sm">
+        <div class="flex space-x-3">
+          <button>💬</button>
+          <button>📁</button>
+        </div>
+        <span class="text-xs">+4 more</span>
+      </div>
+    </div>
+    <a href="/popular-codelets" class="block w-full mt-4 py-2 bg-gray-700 text-white text-center rounded-lg">See more</a>
+  </div>
 
-<br />
+  <!-- Recent Codelets -->
+  <div class="px-4 mt-6">
+    <h2 class="text-lg font-semibold">Recent Codelets</h2>
 
+    <!-- Recent Card 1 -->
+    <div class="bg-gray-900 p-4 rounded-lg mt-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <img src="https://placehold.co/32x32" class="w-6 h-6 rounded-full" alt="">
+          <a href="/user/:username">
+            <span>Cooldude420</span>
+          </a>
+        </div>
+        <div class="text-sm text-gray-400">0 📄 | 0 ⭐</div>
+      </div>
+      <a href="/codelet">
+        <h3 class="text-white font-bold mt-2">Lorem Ipsum</h3>
+        <p class="text-sm text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+      </a>
+    </div>
 
-<h2 class="text-green-900">Para poder empezar a hacer cambios debes:</h2>
-<ol>
-    <li>1. Instalar nvm en <a class="underline" href="https://github.com/coreybutler/nvm-windows/releases/download/1.1.12/nvm-setup.exe">este link</a>.</li>
-    <li>2. Abrir una terminal (Normalmente con Windows+X y luego A)</li>
-    <li>3. Escribir 'nvm install latest'</li>
-    <li>4. Ir al directorio del proyecto que instalaste (si tienes dudas preguntame, pero te dejo una mini guia. Con ls puedes ver en que directorio estas ahora, con cd (nombre del directorio) puedes ir al directorio que nombraste, y con pwd puedes ver en que ruta estas)</li>
-    <li>5. Escribir 'npm i -g &#64;angular/core'</li>
-    <li>6. Escribir 'npm i'</li>
-</ol>
+    <!-- Recent Card 2 -->
+    <div class="bg-gray-900 p-4 rounded-lg mt-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <img src="https://placehold.co/32x32" class="w-6 h-6 rounded-full" alt="">
+          <a href="/user/:username">
+            <span>Ironman98</span>
+          </a>
+        </div>
+        <div class="text-sm text-gray-400">12 📄 | 106 ⭐</div>
+      </div>
+      <a href="/codelet">
+        <h3 class="text-white font-bold mt-2">Sample Text</h3>
+        <p class="text-sm text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+      </a>
+    </div>
 
-<br />
+    <a href="/recent-codelets" class="block w-full mt-4 py-2 bg-gray-700 text-white text-center rounded-lg">See more</a>
+  </div>
+</div>
+</div>
 
-<h2 class="text-green-900">Para poder crear nuevas paginas debes:</h2>
-<ol>
-    <li>1. Ir a /src/app/pages en tu terminal</li>
-    <li>2. Escribir 'ng generate component nombredetupagina'. Esto va a generar todos los archivos que necesitas.</li>
-    <li>3. Debes rutear tu componente para que aparezca en tu navegador como localhost:4200/nombredetucomponente</li>
-    <li>4. Para rutear, debes editar el archivo llamado 'app.routes.ts', que se encuentra en src/app/config</li>
-    <li>5. Debes agregar un nuevo import como los que ya estan, en este caso tienes que poner "import &lcub; NombreComponent &rcub; from '../pages/home/nombredetucomponente.component'"</li>
-    <li>6. Luego tienes que agregar una nueva ruta a la lista. En una nueva linea abajo de la que ya existe, tienes que poner "&lcub; path: 'nombre', component: NombreComponent &rcub;,"</li>
-</ol>
-
-<br />
-
-Happy coding
+<app-footer></app-footer>
