@@ -2,11 +2,15 @@
 {
     public class AlgorithmChangelog
     {
-        public int changelog_id { get; set; }
-        public int algorithm_id { get; set; }
-        public string file_path { get; set; } = null!;
-        public int lang_id { get; set; }
-        public DateTime created_at { get; set; } = DateTime.UtcNow;
+        public int Id { get; set; }
+        public string FilePath { get; set; } = null!;
+        public DateTime CreatedAt { get; set; }
+        public char AuditIsDeleted { get; set; }
 
+        public int AlgorithmId { get; set; }
+        public int SupportedLangId { get; set; }
+
+        public Algorithm Algorithm { get; set; } = null!;
+        public SupportedLang SupportedLang { get; set; } = null!;
     }
 }

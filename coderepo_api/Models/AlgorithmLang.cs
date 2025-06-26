@@ -2,9 +2,14 @@
 {
     public class AlgorithmLang
     {
-        public int algorithm_id { get; set; }
-        public int lang_id { get; set; }
-        public string rootlang_path { get; set; } = null!;
-        public DateTime created_at { get; set; } = DateTime.UtcNow;
+        public string RootlangPath { get; set; } = null!;
+        public DateTime CreatedAt { get; set; }
+        public char AuditIsDeleted { get; set; }
+
+        public int AlgorithmId { get; set; }
+        public int SupportedLangId { get; set; }
+
+        public Algorithm Algorithm { get; set; } = null!;
+        public SupportedLang SupportedLang { get; set; } = null!;
     }
 }

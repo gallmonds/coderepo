@@ -33,13 +33,13 @@ namespace coderepo_api.Controllers
 
             return Ok(new
             {
-                user.user_id,
-                user.username,
-                user.email,
-                user.pfp_id,
-                user.isflagged,
-                user.isbanned,
-                user.audit_isdeleted
+                user.Id,
+                user.Username,
+                user.Email,
+                user.PfpId,
+                user.IsFlagged,
+                user.IsBanned,
+                user.auditIsDeleted
             });
         }
     }

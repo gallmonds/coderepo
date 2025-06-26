@@ -2,11 +2,14 @@
 {
     public class AlgorithmMeta
     {
-        public int algorithm_id { get; set; }
-        public string root_path { get; set; } = null!;
-        public char isprivate { get; set; }
-        public char isflagged { get; set; }
-        public char isdisabled { get; set; }
-        public DateTime created_at { get; set; }
+        public string RootPath { get; set; } = null!;
+        public char IsPrivate { get; set; }
+        public char IsFlagged { get; set; }
+        public char IsDisabled { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public char AuditIsDeleted { get; set; }
+        public int AlgorithmId { get; set; }
+        public Algorithm Algorithm { get; set; } = null!;
     }
 }

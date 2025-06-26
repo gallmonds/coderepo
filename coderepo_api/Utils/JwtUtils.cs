@@ -13,7 +13,7 @@ namespace coderepo_api.Utils
             _configuration = configuration;
         }
 
-        public string GenerateJwtToken(AppUser user)
+        public string GenerateJwtToken(DbUser user)
         {
             var jwtSettings = _configuration.GetSection("Jwt");
             var keyString = jwtSettings["Key"] ?? throw new InvalidOperationException("JWT Key is missing in configuration.");
@@ -22,11 +22,11 @@ namespace coderepo_api.Utils
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, user.user_id.ToString()),
-                new Claim(ClaimTypes.Name, user.username),
-                new Claim(JwtRegisteredClaimNames.Sub, user.user_id.ToString()),
-                new Claim(JwtRegisteredClaimNames.UniqueName, user.username),
-                new Claim(JwtRegisteredClaimNames.Email, user.email)
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email)
             };
 
             var token = new JwtSecurityToken(

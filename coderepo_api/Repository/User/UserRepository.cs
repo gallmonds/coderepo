@@ -14,10 +14,10 @@ namespace coderepo_api.Repository
             _context = context;
         }
 
-        public async Task<AppUser?> Register(UserRegisterDto dto)
+        public async Task<DbUser?> Register(UserRegisterDto dto)
         {
             var exists = await _context.Users
-                .AnyAsync(u => u.username == dto.Username || u.email == dto.Email);
+                .AnyAsync(u => u.Username == dto.Username || u.Email == dto.Email);
             if (exists)
                 return null;
 
@@ -32,7 +32,7 @@ namespace coderepo_api.Repository
                     "CALL create_user({0}, {1}, {2}, {3})",
                     dto.Username, dto.Email, hash, salt);
 
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.username == dto.Username);
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == dto.Username);
                 return user;
             }
             catch (PostgresException ex) when (ex.SqlState == "USR01")
@@ -40,13 +40,13 @@ namespace coderepo_api.Repository
                 return null;
             }
         }
-        public async Task<AppUser?> Login(string username, string password)
+        public async Task<DbUser?> Login(string username, string password)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.username == username);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
             if (user == null) return null;
 
-            var storedHash = Convert.FromBase64String(user.password_hash);
-            var storedSalt = Convert.FromBase64String(user.password_salt);
+            var storedHash = Convert.FromBase64String(user.PasswordHash);
+            var storedSalt = Convert.FromBase64String(user.PasswordSalt);
 
             if (!PasswordUtils.VerifyPassword(password, storedHash, storedSalt))
                 return null;
@@ -54,9 +54,9 @@ namespace coderepo_api.Repository
             return user;
         }
 
-        public async Task<AppUser?> GetById(int userId)
+        public async Task<DbUser?> GetById(int userId)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.user_id == userId);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
         }
 
     }
