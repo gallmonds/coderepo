@@ -138,7 +138,7 @@ namespace coderepo_api.Controllers
 
 
         [AllowAnonymous]
-        [HttpGet("algorithms")]
+        [HttpGet("summary")]
         public async Task<IActionResult> GetAlgorithms(string? filter, int? userId, bool showPrivates = false, int page = 1, int pageSize = 10)
         {
             int? viewerUserId = null;
