@@ -20,5 +20,7 @@
         public List<AlgorithmCollaborator> AlgorithmCollaorators { get; set; } = new List<AlgorithmCollaborator>();
         public List<AlgorithmChangelog> AlgorithmChangelogs { get; set; } = new List<AlgorithmChangelog>();
         public List<Rating> Ratings { get; set; } = new List<Rating>();
+
+        public List<Comment> Comments { get; set; } = new List<Comment>();
     }
 }

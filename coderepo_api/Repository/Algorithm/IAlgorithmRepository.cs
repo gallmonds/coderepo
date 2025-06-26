@@ -10,5 +10,7 @@ namespace coderepo_api.Repository.Algorithm
         Task<bool> CommentAlgorithm(CommentAlgorithmDto dto, int userId);
         Task<bool> UpdateAlgorithm(CreateAlgorithmDto dto, int userId, int algorithmId);
         Task<bool> DeleteAlgorithm(int algorithmId, int userId);
+        Task<bool> AddCollaborators(List<int> userIds, int algorithmId, int currentUserId);
+        Task<IEnumerable<AlgorithmSummaryDto>> GetAlgorithmsAsync(string? filter, int? userId, bool showPrivates, int page, int pageSize);
     }
 }

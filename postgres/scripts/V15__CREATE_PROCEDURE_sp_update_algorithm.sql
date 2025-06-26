@@ -27,7 +27,7 @@ BEGIN
 	
 	UPDATE algorithm_meta
 	SET isprivate = p_is_private
-	WHERE algorithm_id = p_dbuser_id;
+	WHERE algorithm_id = p_algorithm_id;
 
 EXCEPTION
     WHEN OTHERS THEN

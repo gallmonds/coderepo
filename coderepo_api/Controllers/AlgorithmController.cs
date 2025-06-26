@@ -62,11 +62,9 @@ namespace coderepo_api.Controllers
             //    return BadRequest(new { message = "Invalid file path." });
 
             //dirPath = Path.Combine("codelet/", dirPath);
-            filePath = Path.Combine("/app/static/codelet/", filePath);
+            filePath = Path.Combine("codelet/", filePath);
 
             //await _fileRepository.CreateDirectoryAsync(dirPath);
-
-            //SOY IMPARABLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
             using (var ms = new MemoryStream())
             {
@@ -119,6 +117,32 @@ namespace coderepo_api.Controllers
             if (!result)
                 return StatusCode(403, new { message = "User lacks permission to delete algorithms." });
             return Ok(new { message = "Algorithm deleted successfully." });
+        }
+
+        // >:(
+        [HttpPost("add-collaborators")]
+        public async Task<IActionResult> AddCollaborators([FromBody] AddCollaboratorsDto dto)
+        {
+            int userId = User.GetUserId();
+
+            var result = await _repository.AddCollaborators(dto.UserIds, dto.AlgorithmId, userId);
+
+
+            if (!result)
+            {
+                return StatusCode(403, new { message = "User lacks permission to add collaborators." });
+            }
+
+            return Ok(new { message = "Collaborators added successfully." });
+        }
+
+
+        [AllowAnonymous]
+        [HttpGet("algorithms")]
+        public async Task<IActionResult> GetAlgorithms(string? filter, int? userId, bool showPrivates = false, int page = 1, int pageSize = 10)
+        {
+            var algorithms = await _repository.GetAlgorithmsAsync(filter, userId, showPrivates, page, pageSize);
+            return Ok(algorithms);
         }
     }
 }

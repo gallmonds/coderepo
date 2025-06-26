@@ -18,6 +18,9 @@ public class AppDbContext : DbContext
     public DbSet<AlgorithmChangelog> AlgorithmChangelogs { get; set; }
     public DbSet<Rating> Ratings { get; set; }
 
+    public DbSet<ContentType> ContentTypes { get; set; }
+    public DbSet<Comment> Comments { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -225,6 +228,42 @@ public class AppDbContext : DbContext
                   .WithMany(a => a.Ratings)
                   .HasForeignKey(r => r.ContentId)
                   .HasPrincipalKey(a => a.Id);
+        });
+
+        modelBuilder.Entity<ContentType>(entity =>
+        {
+            entity.ToTable("content_type");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("type_id");
+            entity.Property(e => e.Name).HasColumnName("type_name");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.AuditIsDeleted).HasColumnName("audit_isdeleted");
+        });
+
+        modelBuilder.Entity<Comment>(entity =>
+        {
+            entity.ToTable("comment");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("comment_id");
+            entity.Property(e => e.TypeId).HasColumnName("type_id");
+            entity.Property(e => e.ContentId).HasColumnName("content_id");
+            entity.Property(e => e.Body).HasColumnName("body");
+            entity.Property(e => e.OwnerId).HasColumnName("owner_id");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.AuditIsDeleted).HasColumnName("audit_isdeleted");
+
+            entity.HasOne(c => c.Owner)
+                  .WithMany(u => u.Comments)
+                  .HasForeignKey(c => c.OwnerId);
+
+            entity.HasOne(c => c.Type)
+                  .WithMany(ct => ct.Comments)
+                  .HasForeignKey(c => c.TypeId);
+
+            entity.HasOne(c => c.ReplyTo)
+                  .WithMany(r => r.Replies)
+                  .HasForeignKey(c => c.ReplyToId)
+                  .OnDelete(DeleteBehavior.Restrict);
         });
 
     }
