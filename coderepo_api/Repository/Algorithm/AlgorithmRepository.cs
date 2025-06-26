@@ -213,7 +213,6 @@ namespace coderepo_api.Repository.Algorithm
                     query = query.OrderByDescending(a => a.Ratings.Count(r => r.AuditIsDeleted == '0' && r.ContentId == a.Id));
                     break;
                 case "user_algorithms":
-                    // ya filtrado arriba por userId
                     query = query.OrderByDescending(a => a.CreatedAt);
                     break;
                 default:
@@ -246,6 +245,69 @@ namespace coderepo_api.Repository.Algorithm
                 })
                 .ToListAsync();
         }
+
+        public async Task<AlgorithmDetailDto?> GetAlgorithmDetailsAsync(int algorithmId, int? viewerUserId)
+        {
+            var algorithm = await _context.Algorithms
+                .Include(a => a.UserDb).ThenInclude(u => u.MediaDb)
+                .Include(a => a.AlgorithmMeta)
+                .Include(a => a.AlgorithmLangs).ThenInclude(al => al.SupportedLang).ThenInclude(sl => sl.MediaDb)
+                .Include(a => a.AlgorithmTags).ThenInclude(at => at.Tag)
+                .Include(a => a.AlgorithmCollaborators)
+                .FirstOrDefaultAsync(a => a.Id == algorithmId);
+
+            if (algorithm == null)
+                return null;
+
+            var meta = algorithm.AlgorithmMeta;
+            if (algorithm.AuditIsDeleted == '1' || meta.IsFlagged == '1' || meta.IsDisabled == '1')
+                return null;
+
+            if (meta.IsPrivate == '1' &&
+                viewerUserId != algorithm.OwnerId &&
+                !algorithm.AlgorithmCollaborators.Any(c => c.UserId == viewerUserId))
+                return null;
+
+            var rootComments = await _context.Comments
+                .Include(c => c.Owner).ThenInclude(u => u.MediaDb)
+                .Where(c => c.TypeId == 2 && c.ContentId == algorithmId && c.AuditIsDeleted == '0' && c.ReplyToId == null)
+                .OrderByDescending(c => c.CreatedAt)
+                .Select(c => new CommentDto
+                {
+                    CommentId = c.Id,
+                    Content = c.Body,
+                    Date = c.CreatedAt,
+                    Username = c.Owner.Username,
+                    PfpRoute = c.Owner.MediaDb.FilePath,
+                    RatingCount = _context.Ratings.Count(r =>
+                        r.TypeId == 1 && r.ContentId == c.Id && r.AuditIsDeleted == '0')
+                })
+                .ToListAsync();
+
+            return new AlgorithmDetailDto
+            {
+                AlgorithmId = algorithm.Id,
+                Title = algorithm.Title,
+                Description = algorithm.Description,
+                CreatedAt = algorithm.CreatedAt,
+                Owner = new UserSummaryDto
+                {
+                    Username = algorithm.UserDb.Username,
+                    ProfilePic = algorithm.UserDb.MediaDb.FilePath
+                },
+                RatingCount = await _context.Ratings.CountAsync(r =>
+                    r.TypeId == 2 && r.ContentId == algorithmId && r.AuditIsDeleted == '0'),
+                Tags = algorithm.AlgorithmTags.Select(at => at.Tag.Name).ToList(),
+                Languages = algorithm.AlgorithmLangs.Select(al => new LanguageDetailDto
+                {
+                    LangName = al.SupportedLang.LangName,
+                    IconPath = al.SupportedLang.MediaDb.FilePath,
+                    CodeletPath = "codelet/" + al.RootlangPath
+                }).ToList(),
+                Comments = rootComments
+            };
+        }
+
 
     }
 }

@@ -142,14 +142,24 @@ namespace coderepo_api.Controllers
         public async Task<IActionResult> GetAlgorithms(string? filter, int? userId, bool showPrivates = false, int page = 1, int pageSize = 10)
         {
             int? viewerUserId = null;
-            try
-            {
-                viewerUserId = User.GetUserId();
-            }
-            catch (UnauthorizedAccessException) { }
+            try { viewerUserId = User.GetUserId(); } catch { }
 
             var algorithms = await _repository.GetAlgorithmsAsync(filter, viewerUserId, userId, showPrivates, page, pageSize);
             return Ok(algorithms);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("algorithms/{id}")]
+        public async Task<IActionResult> GetAlgorithmDetails(int id)
+        {
+            int? viewerUserId = null;
+            try { viewerUserId = User.GetUserId(); } catch { }
+
+            var algorithm = await _repository.GetAlgorithmDetailsAsync(id, viewerUserId);
+            if (algorithm == null)
+                return NotFound(new { message = "Algorithm not found or access denied." });
+
+            return Ok(algorithm);
         }
     }
 }

@@ -245,6 +245,7 @@ public class AppDbContext : DbContext
             entity.ToTable("comment");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).HasColumnName("comment_id");
+            entity.Property(e => e.ReplyToId).HasColumnName("replyto_id");
             entity.Property(e => e.TypeId).HasColumnName("type_id");
             entity.Property(e => e.ContentId).HasColumnName("content_id");
             entity.Property(e => e.Body).HasColumnName("body");
@@ -255,10 +256,6 @@ public class AppDbContext : DbContext
             entity.HasOne(c => c.Owner)
                   .WithMany(u => u.Comments)
                   .HasForeignKey(c => c.OwnerId);
-
-            entity.HasOne(c => c.Type)
-                  .WithMany(ct => ct.Comments)
-                  .HasForeignKey(c => c.TypeId);
 
             entity.HasOne(c => c.ReplyTo)
                   .WithMany(r => r.Replies)

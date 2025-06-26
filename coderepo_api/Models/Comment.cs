@@ -17,7 +17,6 @@
         
 
         public DbUser Owner { get; set; } = null!;
-        public ContentType Type { get; set; } = null!;
         public Comment? ReplyTo { get; set; } = null!;
         public List<Comment> Replies { get; set; } = new();
     }

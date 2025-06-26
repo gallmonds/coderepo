@@ -12,5 +12,6 @@ namespace coderepo_api.Repository.Algorithm
         Task<bool> DeleteAlgorithm(int algorithmId, int userId);
         Task<bool> AddCollaborators(List<int> userIds, int algorithmId, int currentUserId);
         Task<IEnumerable<AlgorithmSummaryDto>> GetAlgorithmsAsync(string? filter, int? viewerUserId, int? userId, bool showPrivates, int page, int pageSize);
+        Task<AlgorithmDetailDto?> GetAlgorithmDetailsAsync(int algorithmId, int? viewerUserId);
     }
 }
