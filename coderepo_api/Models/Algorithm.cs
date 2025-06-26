@@ -17,7 +17,7 @@
         public List<AlgorithmLang> AlgorithmLangs { get; set; } = new List<AlgorithmLang>();
 
         public List<TagAlgorithm> AlgorithmTags { get; set; } = new List<TagAlgorithm>();
-        public List<AlgorithmCollaborator> AlgorithmCollaorators { get; set; } = new List<AlgorithmCollaborator>();
+        public List<AlgorithmCollaborator> AlgorithmCollaborators { get; set; } = new List<AlgorithmCollaborator>();
         public List<AlgorithmChangelog> AlgorithmChangelogs { get; set; } = new List<AlgorithmChangelog>();
         public List<Rating> Ratings { get; set; } = new List<Rating>();
 

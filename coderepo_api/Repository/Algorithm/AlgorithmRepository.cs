@@ -168,28 +168,35 @@ namespace coderepo_api.Repository.Algorithm
             }
         }
 
-        public async Task<IEnumerable<AlgorithmSummaryDto>> GetAlgorithmsAsync(string? filter, int? userId, bool showPrivates, int page, int pageSize)
+        public async Task<IEnumerable<AlgorithmSummaryDto>> GetAlgorithmsAsync(string? filter, int? viewerUserId, int? userId, bool showPrivates, int page, int pageSize)
         {
             var query = _context.Algorithms
                 .Include(a => a.UserDb).ThenInclude(u => u.MediaDb)
                 .Include(a => a.AlgorithmLangs).ThenInclude(al => al.SupportedLang).ThenInclude(sl => sl.MediaDb)
                 .Include(a => a.AlgorithmTags).ThenInclude(at => at.Tag)
                 .Include(a => a.AlgorithmMeta)
-                .Include(a => a.AlgorithmCollaorators)
+                .Include(a => a.AlgorithmCollaborators)
                 .Where(a => a.AuditIsDeleted == '0' && a.AlgorithmMeta.IsFlagged != '1' && a.AlgorithmMeta.IsDisabled != '1');
 
             if (!showPrivates)
             {
                 query = query.Where(a => a.AlgorithmMeta.IsPrivate != '1');
             }
-            else if (userId.HasValue)
+            else if (viewerUserId.HasValue)
             {
                 query = query.Where(a => a.AlgorithmMeta.IsPrivate != '1' ||
-                                         a.OwnerId == userId ||
-                                         a.AlgorithmCollaorators.Any(c => c.UserId == userId));
+                                         a.OwnerId == viewerUserId ||
+                                         a.AlgorithmCollaborators.Any(c => c.UserId == viewerUserId));
+            }
+            else
+            {
+                query = query.Where(a => a.AlgorithmMeta.IsPrivate != '1');
             }
 
-            query = query.OrderByDescending(a => a.CreatedAt);
+            if (filter == "user_algorithms" && userId.HasValue)
+            {
+                query = query.Where(a => a.OwnerId == userId.Value);
+            }
 
             switch (filter)
             {
@@ -206,8 +213,11 @@ namespace coderepo_api.Repository.Algorithm
                     query = query.OrderByDescending(a => a.Ratings.Count(r => r.AuditIsDeleted == '0' && r.ContentId == a.Id));
                     break;
                 case "user_algorithms":
-                    if (userId.HasValue)
-                        query = query.Where(a => a.OwnerId == userId.Value);
+                    // ya filtrado arriba por userId
+                    query = query.OrderByDescending(a => a.CreatedAt);
+                    break;
+                default:
+                    query = query.OrderByDescending(a => a.CreatedAt);
                     break;
             }
 
@@ -225,7 +235,7 @@ namespace coderepo_api.Repository.Algorithm
                         Username = a.UserDb.Username,
                         ProfilePic = a.UserDb.MediaDb.FilePath
                     },
-                    RatingCount = a.Ratings.Count(r => r.AuditIsDeleted == '0' && r.ContentId == a.Id),
+                    RatingCount = _context.Ratings.Count(r => r.AuditIsDeleted == '0' && r.ContentId == a.Id),
                     CommentCount = _context.Comments.Count(c => c.AuditIsDeleted == '0' && c.ContentId == a.Id),
                     Tags = a.AlgorithmTags.Select(at => at.Tag.Name).Take(5).ToList(),
                     Languages = a.AlgorithmLangs.Select(al => new LanguageSummaryDto
@@ -236,5 +246,6 @@ namespace coderepo_api.Repository.Algorithm
                 })
                 .ToListAsync();
         }
+
     }
 }

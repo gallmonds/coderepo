@@ -129,7 +129,7 @@ public class AppDbContext : DbContext
             entity.Property(e => e.AuditIsDeleted).HasColumnName("audit_isdeleted");
 
             entity.HasOne(ac => ac.Algorithm)
-                  .WithMany(a => a.AlgorithmCollaorators)
+                  .WithMany(a => a.AlgorithmCollaborators)
                   .HasForeignKey(ac => ac.AlgorithmId);
 
             entity.HasOne(ac => ac.User)
