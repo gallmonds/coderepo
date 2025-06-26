@@ -308,6 +308,46 @@ namespace coderepo_api.Repository.Algorithm
             };
         }
 
+        public async Task<List<CommentDto>> GetRepliesAsync(int parentCommentId)
+        {
+            var parent = await _context.Comments
+                .FirstOrDefaultAsync(c => c.Id == parentCommentId && c.AuditIsDeleted == '0');
+
+            if (parent == null) return new List<CommentDto>();
+
+            var replies = await _context.Comments
+                .Include(c => c.Owner).ThenInclude(u => u.MediaDb)
+                .Where(c => c.AuditIsDeleted == '0' &&
+                            c.ContentId == parent.ContentId &&  
+                            c.TypeId == parent.TypeId)      
+                .OrderBy(c => c.CreatedAt)
+                .ToListAsync();
+
+            var ratingDict = await _context.Ratings
+                .Where(r => r.TypeId == 1 && r.AuditIsDeleted == '0' &&
+                            replies.Select(x => x.Id).Contains(r.ContentId))
+                .GroupBy(r => r.ContentId)
+                .ToDictionaryAsync(g => g.Key, g => g.Count());
+
+            var dtoDict = replies.ToDictionary(c => c.Id, c => new CommentDto
+            {
+                CommentId = c.Id,
+                Content = c.Body,
+                Date = c.CreatedAt,
+                Username = c.Owner.Username,
+                PfpRoute = c.Owner.MediaDb.FilePath,
+                RatingCount = ratingDict.TryGetValue(c.Id, out var cnt) ? cnt : 0,
+                Replies = new List<CommentDto>()
+            });
+
+            foreach (var c in replies)
+            {
+                if (c.ReplyToId.HasValue && dtoDict.ContainsKey(c.ReplyToId.Value))
+                    dtoDict[c.ReplyToId.Value].Replies.Add(dtoDict[c.Id]);
+            }
+            return dtoDict[parentCommentId].Replies;
+        }
+
 
     }
 }

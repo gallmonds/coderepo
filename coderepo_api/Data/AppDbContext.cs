@@ -224,10 +224,6 @@ public class AppDbContext : DbContext
                   .WithMany(u => u.Ratings)
                   .HasForeignKey(r => r.UserId);
 
-            entity.HasOne(r => r.Algorithm)
-                  .WithMany(a => a.Ratings)
-                  .HasForeignKey(r => r.ContentId)
-                  .HasPrincipalKey(a => a.Id);
         });
 
         modelBuilder.Entity<ContentType>(entity =>
@@ -244,24 +240,39 @@ public class AppDbContext : DbContext
         {
             entity.ToTable("comment");
             entity.HasKey(e => e.Id);
+
             entity.Property(e => e.Id).HasColumnName("comment_id");
-            entity.Property(e => e.ReplyToId).HasColumnName("replyto_id");
             entity.Property(e => e.TypeId).HasColumnName("type_id");
             entity.Property(e => e.ContentId).HasColumnName("content_id");
             entity.Property(e => e.Body).HasColumnName("body");
             entity.Property(e => e.OwnerId).HasColumnName("owner_id");
+            entity.Property(e => e.ReplyToId).HasColumnName("replyto_id");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.AuditIsDeleted).HasColumnName("audit_isdeleted");
 
             entity.HasOne(c => c.Owner)
-                  .WithMany(u => u.Comments)
-                  .HasForeignKey(c => c.OwnerId);
+                .WithMany(u => u.Comments)
+                .HasForeignKey(c => c.OwnerId);
 
             entity.HasOne(c => c.ReplyTo)
-                  .WithMany(r => r.Replies)
-                  .HasForeignKey(c => c.ReplyToId)
-                  .OnDelete(DeleteBehavior.Restrict);
+                .WithMany(r => r.Replies)
+                .HasForeignKey(c => c.ReplyToId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.Ignore("Algorithm");
+            entity.Ignore("AlgorithmId");
+            entity.Ignore("ContentType");
+            entity.Ignore("ContentTypeId");
         });
+
+        modelBuilder.Entity<Algorithm>()
+            .Ignore(a => a.Comments);
+
+        modelBuilder.Entity<ContentType>()
+                    .Ignore(ct => ct.Comments);
+
+        modelBuilder.Entity<Algorithm>()
+            .Ignore(a => a.Ratings);
 
     }
 }

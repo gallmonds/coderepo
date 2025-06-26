@@ -10,6 +10,6 @@
         public int Version { get; set; }
 
         public DbUser User { get; set; } = null!;
-        public Algorithm Algorithm { get; set; } = null!;
+        //public Algorithm Algorithm { get; set; } = null!;
     }
 }

@@ -161,5 +161,17 @@ namespace coderepo_api.Controllers
 
             return Ok(algorithm);
         }
+
+        [AllowAnonymous]
+        [HttpGet("comments/{commentId}/replies")]
+        public async Task<IActionResult> GetCommentReplies(int commentId)
+        {
+            var replies = await _repository.GetRepliesAsync(commentId);
+
+            if (replies == null || !replies.Any())
+                return NotFound(new { message = "No replies found or comment does not exist." });
+
+            return Ok(replies);
+        }
     }
 }

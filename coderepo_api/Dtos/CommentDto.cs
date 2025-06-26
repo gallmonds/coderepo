@@ -8,5 +8,7 @@
         public string Username { get; set; } = string.Empty;
         public string PfpRoute { get; set; } = string.Empty;
         public int RatingCount { get; set; }
+        public List<CommentDto> Replies { get; set; } = [];
+
     }
 }
