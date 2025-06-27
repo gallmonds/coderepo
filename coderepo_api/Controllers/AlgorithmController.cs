@@ -198,11 +198,8 @@ namespace coderepo_api.Controllers
             if (dto.Tags == null || dto.Tags.Count == 0)
                 return BadRequest("No tags provided.");
 
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id");
-            if (userIdClaim == null)
-                return Unauthorized("User ID not found in token.");
 
-            int userId = int.Parse(userIdClaim.Value);
+            int userId = User.GetUserId();
 
             var success = await _repository.CreateTagsAsync(dto.Tags, userId);
             if (!success)

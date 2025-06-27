@@ -9,7 +9,7 @@ import { tap } from 'rxjs/operators';
 
 
 export class AuthService {
-  private apiUrl = 'http://localhost:5000/api/auth';
+  private apiUrl = 'http://localhost:5131/api/auth';
   private tokenKey = 'jwt_token';
   private loggedIn = new BehaviorSubject<boolean>(this.hasValidToken());
 
