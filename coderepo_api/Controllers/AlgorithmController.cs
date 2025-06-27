@@ -1,9 +1,11 @@
 ﻿using coderepo_api.Dtos;
 using coderepo_api.Extensions;
+using coderepo_api.Models;
 using coderepo_api.Repository;
 using coderepo_api.Repository.Algorithm;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace coderepo_api.Controllers
 {
@@ -14,11 +16,13 @@ namespace coderepo_api.Controllers
     {
         private readonly IAlgorithmRepository _repository;
         private readonly IFileRepository _fileRepository;
+        private readonly AppDbContext _context;
 
-        public AlgorithmController(IAlgorithmRepository repository, IFileRepository filerepository)
+        public AlgorithmController(IAlgorithmRepository repository, IFileRepository filerepository, AppDbContext context)
         {
             _repository = repository;
             _fileRepository = filerepository;
+            _context = context;
         }
 
         [HttpPost("create")]
@@ -172,6 +176,66 @@ namespace coderepo_api.Controllers
                 return NotFound(new { message = "No replies found or comment does not exist." });
 
             return Ok(replies);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("algorithms/search")]
+        public async Task<IActionResult> SearchAlgorithms(
+            [FromQuery] string? query,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 20)
+        {
+            int? userId = User.Identity?.IsAuthenticated == true ? User.GetUserId() : null;
+
+            var results = await _repository.SearchAlgorithmsAsync(query, userId, showPrivates: false, page, pageSize);
+            return Ok(results);
+        }
+
+        [Authorize]
+        [HttpPost("tag/create")]
+        public async Task<IActionResult> CreateTags([FromBody] CreateTagsDto dto)
+        {
+            if (dto.Tags == null || dto.Tags.Count == 0)
+                return BadRequest("No tags provided.");
+
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id");
+            if (userIdClaim == null)
+                return Unauthorized("User ID not found in token.");
+
+            int userId = int.Parse(userIdClaim.Value);
+
+            var success = await _repository.CreateTagsAsync(dto.Tags, userId);
+            if (!success)
+                return StatusCode(500, "Error creating tags.");
+
+            return Ok("Tags created successfully.");
+        }
+
+        [Authorize]
+        [HttpPost("tag/assign")]
+        public async Task<IActionResult> AssignTags([FromBody] AssignTagsDto dto)
+        {
+            int userId = User.GetUserId();
+
+            var success = await _repository.AssignTagsAsync(dto, userId);
+
+            if (!success)
+                return StatusCode(403, new { message = "You dont have permissions to modify this algorithm." });
+
+            return Ok(new { message = "Tags assigned successfully." });
+        }
+
+        [HttpGet("tag/search")]
+        public async Task<IActionResult> SearchTags([FromQuery] string q)
+        {
+            var results = await _context.Tags
+                .Where(t => t.Name.ToLower().Contains(q.ToLower()))
+                .OrderBy(t => t.Name)
+                .Select(t => new { t.Id, t.Name })
+                .Take(10)
+                .ToListAsync();
+
+            return Ok(results);
         }
     }
 }

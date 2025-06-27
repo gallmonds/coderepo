@@ -34,7 +34,6 @@ BEGIN
 
 EXCEPTION
     WHEN OTHERS THEN
-        ROLLBACK;
         RAISE;
 END;
 $$;

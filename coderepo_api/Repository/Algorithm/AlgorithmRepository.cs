@@ -1,4 +1,5 @@
 ﻿using coderepo_api.Dtos;
+using coderepo_api.Models;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using NpgsqlTypes;
@@ -318,8 +319,8 @@ namespace coderepo_api.Repository.Algorithm
             var replies = await _context.Comments
                 .Include(c => c.Owner).ThenInclude(u => u.MediaDb)
                 .Where(c => c.AuditIsDeleted == '0' &&
-                            c.ContentId == parent.ContentId &&  
-                            c.TypeId == parent.TypeId)      
+                            c.ContentId == parent.ContentId &&
+                            c.TypeId == parent.TypeId)
                 .OrderBy(c => c.CreatedAt)
                 .ToListAsync();
 
@@ -346,6 +347,103 @@ namespace coderepo_api.Repository.Algorithm
                     dtoDict[c.ReplyToId.Value].Replies.Add(dtoDict[c.Id]);
             }
             return dtoDict[parentCommentId].Replies;
+        }
+
+        public async Task<IEnumerable<AlgorithmSummaryDto>> SearchAlgorithmsAsync(string? searchQuery, int? viewerUserId, bool showPrivates, int page, int pageSize)
+        {
+            var query = _context.Algorithms
+                .Include(a => a.UserDb).ThenInclude(u => u.MediaDb)
+                .Include(a => a.AlgorithmLangs).ThenInclude(al => al.SupportedLang).ThenInclude(sl => sl.MediaDb)
+                .Include(a => a.AlgorithmTags).ThenInclude(at => at.Tag)
+                .Include(a => a.AlgorithmMeta)
+                .Include(a => a.AlgorithmCollaborators)
+                .Where(a => a.AuditIsDeleted == '0' &&
+                            a.AlgorithmMeta.IsFlagged != '1' &&
+                            a.AlgorithmMeta.IsDisabled != '1');
+
+            if (!showPrivates)
+            {
+                query = query.Where(a => a.AlgorithmMeta.IsPrivate != '1');
+            }
+            else if (viewerUserId.HasValue)
+            {
+                query = query.Where(a => a.AlgorithmMeta.IsPrivate != '1' ||
+                                         a.OwnerId == viewerUserId ||
+                                         a.AlgorithmCollaborators.Any(c => c.UserId == viewerUserId));
+            }
+            else
+            {
+                query = query.Where(a => a.AlgorithmMeta.IsPrivate != '1');
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                string lowered = searchQuery.Trim().ToLower();
+                query = query.Where(a => a.Title.ToLower().Contains(lowered));
+                query = query.OrderBy(a => a.Title.ToLower().IndexOf(lowered));
+            }
+            else
+            {
+                query = query.OrderByDescending(a => a.CreatedAt);
+            }
+
+            return await query.AsSplitQuery()
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(a => new AlgorithmSummaryDto
+                {
+                    AlgorithmId = a.Id,
+                    Title = a.Title,
+                    Description = a.Description,
+                    CreatedAt = a.CreatedAt,
+                    Owner = new UserSummaryDto
+                    {
+                        Username = a.UserDb.Username,
+                        ProfilePic = a.UserDb.MediaDb.FilePath
+                    },
+                    RatingCount = _context.Ratings.Count(r => r.AuditIsDeleted == '0' && r.ContentId == a.Id),
+                    CommentCount = _context.Comments.Count(c => c.AuditIsDeleted == '0' && c.ContentId == a.Id),
+                    Tags = a.AlgorithmTags.Select(at => at.Tag.Name).Take(5).ToList(),
+                    Languages = a.AlgorithmLangs.Select(al => new LanguageSummaryDto
+                    {
+                        LangName = al.SupportedLang.LangName,
+                        IconPath = al.SupportedLang.MediaDb.FilePath
+                    }).ToList()
+                })
+                .ToListAsync();
+        }
+
+        public async Task<bool> AssignTagsAsync(AssignTagsDto dto, int userId)
+        {
+            try
+            {
+                await _context.Database.ExecuteSqlRawAsync(
+                    "CALL sp_assign_tags_to_algorithm({0}, {1}, {2})",
+                    dto.AlgorithmId,
+                    userId,
+                    dto.TagIds.ToArray());
+                return true;
+            }
+            catch (PostgresException)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> CreateTagsAsync(IEnumerable<string> tagNames, int userId)
+        {
+            try
+            {
+                var tagArray = tagNames.ToArray();
+                await _context.Database.ExecuteSqlRawAsync(
+                    "CALL sp_create_tags({0}, {1})",
+                    tagArray, userId);
+                return true;
+            }
+            catch (PostgresException)
+            {
+                return false;
+            }
         }
 
 

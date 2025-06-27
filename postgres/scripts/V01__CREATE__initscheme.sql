@@ -78,10 +78,10 @@ CREATE TABLE IF NOT EXISTS dbuser (
 	pfp_id INT REFERENCES media(media_id) NOT NULL,
 	username VARCHAR(20) NOT NULL UNIQUE,
 	email VARCHAR(255) NOT NULL UNIQUE,
+	biography TEXT NULL,
 	password_hash VARCHAR(255) NOT NULL,
 	password_salt VARCHAR(255) NOT NULL,
 	isflagged CHAR(1) DEFAULT 0 NOT NULL,
-
 	isbanned CHAR(1) DEFAULT 0 NOT NULL,
 	created_at TIMESTAMP DEFAULT NOW() NOT NULL,
 	audit_isdeleted CHAR(1) DEFAULT 0 NOT NULL,

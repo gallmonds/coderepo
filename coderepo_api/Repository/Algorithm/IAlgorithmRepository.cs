@@ -1,4 +1,5 @@
 ﻿using coderepo_api.Dtos;
+using coderepo_api.Models;
 
 namespace coderepo_api.Repository.Algorithm
 {
@@ -14,5 +15,8 @@ namespace coderepo_api.Repository.Algorithm
         Task<IEnumerable<AlgorithmSummaryDto>> GetAlgorithmsAsync(string? filter, int? viewerUserId, int? userId, bool showPrivates, int page, int pageSize);
         Task<AlgorithmDetailDto?> GetAlgorithmDetailsAsync(int algorithmId, int? viewerUserId);
         Task<List<CommentDto>> GetRepliesAsync(int parentCommentId);
+        Task<IEnumerable<AlgorithmSummaryDto>> SearchAlgorithmsAsync(string? searchQuery, int? viewerUserId, bool showPrivates, int page, int pageSize);
+        Task<bool> AssignTagsAsync(AssignTagsDto dto, int userId);
+        Task<bool> CreateTagsAsync(IEnumerable<string> tagNames, int userId);
     }
 }

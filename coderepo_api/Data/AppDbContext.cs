@@ -40,6 +40,7 @@ public class AppDbContext : DbContext
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.auditIsDeleted).HasColumnName("audit_isdeleted");
             entity.Property(e => e.PfpId).HasColumnName("pfp_id");
+            entity.Property(e => e.Biography).HasColumnName("biography");
 
             entity.HasIndex(e => e.Username).IsUnique();
             entity.HasIndex(e => e.Email).IsUnique();

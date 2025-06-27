@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public string Username { get; set; } = null!;
+        public string? Biography { get; set; } = string.Empty;
         public string Email { get; set; } = null!;
         public string PasswordHash { get; set; } = null!;
         public string PasswordSalt { get; set; } = null!;
