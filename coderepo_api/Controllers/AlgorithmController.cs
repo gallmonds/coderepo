@@ -234,5 +234,31 @@ namespace coderepo_api.Controllers
 
             return Ok(results);
         }
+
+        [AllowAnonymous]
+        [HttpGet("latest-static-file")]
+        public IActionResult GetLatestStaticFile([FromQuery] int algorithmId, [FromQuery] string lang)
+        {
+            var relativeDir = Path.Combine("codelet", algorithmId.ToString(), lang);
+
+            var fullDir = Path.Combine(_fileRepository.GetBasePath(), relativeDir);
+            if (!Directory.Exists(fullDir))
+                return NotFound(new { message = "Directory not found." });
+
+            var files = Directory.GetFiles(fullDir)
+                .OrderByDescending(f => f) 
+                .ToList();
+
+            if (!files.Any())
+                return NotFound(new { message = "No files found." });
+
+            var latestFile = Path.GetFileName(files.First());
+
+            var publicPath = $"static/{relativeDir}/{latestFile}";
+
+            return Ok(new { path = publicPath });
+        }
+
+
     }
 }

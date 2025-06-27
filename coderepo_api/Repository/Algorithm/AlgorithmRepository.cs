@@ -169,7 +169,13 @@ namespace coderepo_api.Repository.Algorithm
             }
         }
 
-        public async Task<IEnumerable<AlgorithmSummaryDto>> GetAlgorithmsAsync(string? filter, int? viewerUserId, int? userId, bool showPrivates, int page, int pageSize)
+        public async Task<IEnumerable<AlgorithmSummaryDto>> GetAlgorithmsAsync(
+            string? filter,
+            int? viewerUserId,
+            int? userId,
+            bool showPrivates,
+            int page,
+            int pageSize)
         {
             var query = _context.Algorithms
                 .Include(a => a.UserDb).ThenInclude(u => u.MediaDb)
@@ -177,7 +183,10 @@ namespace coderepo_api.Repository.Algorithm
                 .Include(a => a.AlgorithmTags).ThenInclude(at => at.Tag)
                 .Include(a => a.AlgorithmMeta)
                 .Include(a => a.AlgorithmCollaborators)
-                .Where(a => a.AuditIsDeleted == '0' && a.AlgorithmMeta.IsFlagged != '1' && a.AlgorithmMeta.IsDisabled != '1');
+                .Where(a =>
+                    a.AuditIsDeleted == '0' &&
+                    a.AlgorithmMeta.IsFlagged != '1' &&
+                    a.AlgorithmMeta.IsDisabled != '1');
 
             if (!showPrivates)
             {
@@ -185,9 +194,10 @@ namespace coderepo_api.Repository.Algorithm
             }
             else if (viewerUserId.HasValue)
             {
-                query = query.Where(a => a.AlgorithmMeta.IsPrivate != '1' ||
-                                         a.OwnerId == viewerUserId ||
-                                         a.AlgorithmCollaborators.Any(c => c.UserId == viewerUserId));
+                query = query.Where(a =>
+                    a.AlgorithmMeta.IsPrivate != '1' ||
+                    a.OwnerId == viewerUserId ||
+                    a.AlgorithmCollaborators.Any(c => c.UserId == viewerUserId));
             }
             else
             {
@@ -199,31 +209,8 @@ namespace coderepo_api.Repository.Algorithm
                 query = query.Where(a => a.OwnerId == userId.Value);
             }
 
-            switch (filter)
-            {
-                case "most_popular":
-                    var recentDate = DateTime.UtcNow.AddDays(-30);
-                    query = query
-                        .Where(a => a.CreatedAt >= recentDate)
-                        .OrderByDescending(a => a.Ratings.Count(r => r.AuditIsDeleted == '0' && r.ContentId == a.Id));
-                    break;
-                case "most_recent":
-                    query = query.OrderByDescending(a => a.CreatedAt);
-                    break;
-                case "most_rated":
-                    query = query.OrderByDescending(a => a.Ratings.Count(r => r.AuditIsDeleted == '0' && r.ContentId == a.Id));
-                    break;
-                case "user_algorithms":
-                    query = query.OrderByDescending(a => a.CreatedAt);
-                    break;
-                default:
-                    query = query.OrderByDescending(a => a.CreatedAt);
-                    break;
-            }
-
-            return await query.AsSplitQuery()
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
+            var baseList = await query
+                .AsSplitQuery()
                 .Select(a => new AlgorithmSummaryDto
                 {
                     AlgorithmId = a.Id,
@@ -245,7 +232,36 @@ namespace coderepo_api.Repository.Algorithm
                     }).ToList()
                 })
                 .ToListAsync();
+
+            switch (filter)
+            {
+                case "most_popular":
+                    var recentDate = DateTime.UtcNow.AddDays(-30);
+                    baseList = baseList
+                        .Where(a => a.CreatedAt >= recentDate)
+                        .OrderByDescending(a => a.RatingCount)
+                        .ToList();
+                    break;
+                case "most_rated":
+                    baseList = baseList
+                        .OrderByDescending(a => a.RatingCount)
+                        .ToList();
+                    break;
+                case "most_recent":
+                case "user_algorithms":
+                default:
+                    baseList = baseList
+                        .OrderByDescending(a => a.CreatedAt)
+                        .ToList();
+                    break;
+            }
+
+            return baseList
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
         }
+
 
         public async Task<AlgorithmDetailDto?> GetAlgorithmDetailsAsync(int algorithmId, int? viewerUserId)
         {

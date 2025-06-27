@@ -1,0 +1,49 @@
+<app-header></app-header>
+
+<div class="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+    <div class="bg-gray-800 text-white font-sans rounded-lg shadow-lg p-6 w-full max-w-3xl mx-auto mt-6">
+        <div class="p-6 text-white">
+            <h2 class="text-xl mb-4">Search results for "{{ query }}"</h2>
+
+            <ng-container *ngIf="loading">
+                <p class="text-center text-gray-400">Loading...</p>
+            </ng-container>
+
+            <ng-container *ngIf="!loading && results.length > 0; else noResults">
+                <div *ngFor="let algo of results" class="bg-gray-900 p-4 rounded-lg mb-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <img [src]="getProfilePic(algo.owner.profilePic)" class="w-6 h-6 rounded-full" />
+                            <a [href]="'/user/' + algo.owner.username">{{ algo.owner.username }}</a>
+                        </div>
+                        <div class="text-sm text-gray-400">{{ algo.commentCount }} 💬 | {{ algo.ratingCount }} ⭐</div>
+                    </div>
+                    <a [href]="'/codelet/' + algo.algorithmId">
+                        <h3 class="text-white font-bold mt-2">{{ algo.title }}</h3>
+                        <p class="text-sm text-gray-400">{{ algo.description }}</p>
+                    </a>
+                    <div class="flex justify-between mt-2 text-gray-400 text-sm">
+                        <div class="flex space-x-2 overflow-hidden whitespace-nowrap overflow-ellipsis max-w-[70%]">
+                            <span *ngFor="let tag of algo.tags">#{{ tag }}</span>
+                        </div>
+                        <span class="text-xs">+{{ algo.languages.length }} langs</span>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex justify-between mt-4">
+                    <button (click)="prevPage()" [disabled]="page === 1"
+                        class="bg-gray-700 px-4 py-2 rounded">Prev</button>
+                    <button (click)="nextPage()" [disabled]="results.length < pageSize"
+                        class="bg-gray-700 px-4 py-2 rounded">Next</button>
+                </div>
+            </ng-container>
+
+            <ng-template #noResults>
+                <p class="text-center text-gray-500">No results found.</p>
+            </ng-template>
+        </div>
+    </div>
+</div>
+
+<app-footer></app-footer>

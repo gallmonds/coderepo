@@ -46,5 +46,10 @@
             }
             await Task.CompletedTask;
         }
+
+        public string GetBasePath()
+        {
+            return _basePath;
+        }
     }
 }

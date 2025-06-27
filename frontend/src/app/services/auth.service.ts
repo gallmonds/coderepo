@@ -13,7 +13,7 @@ export class AuthService {
   private tokenKey = 'jwt_token';
   private loggedIn = new BehaviorSubject<boolean>(this.hasValidToken());
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   login(credentials: { username: string, password: string }): Observable<any> {
     return this.http.post<{ token: string }>(`${this.apiUrl}/login`, credentials)
@@ -53,6 +53,18 @@ export class AuthService {
       return Date.now() / 1000 < exp;
     } catch (e) {
       return false;
+    }
+  }
+
+  getUserIdFromToken(): number | null {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) return null;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.sub ? parseInt(payload.sub, 10) : null;
+    } catch {
+      return null;
     }
   }
 }
