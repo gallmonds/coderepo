@@ -1,78 +1,148 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
-import { SafeHtmlPipe } from './safe-html.pipe';
-import { marked } from 'marked'; 
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AlgorithmService } from '../../services/algorithm.service';
 
 @Component({
   selector: 'app-create-codelet',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,     
-    SafeHtmlPipe
-  ],
+  imports: [CommonModule, FormsModule],
   templateUrl: './create-codelet.component.html'
 })
 export class CreateCodeletComponent {
   title = '';
   summary = '';
-  documentation = '';
-  markdownPreview = '';
-  tags: string[] = [];
-  collaborators = '';
-  selectedFile: File | null = null;
+  isPrivate = false;
+  tagInput = '';
+  tags: { id: number, name: string }[] = [];
+  suggestions: { id: number, name: string }[] = [];
+  loading = false;
+  selectedSuggestionIndex = -1;
+  pendingNewTags: string[] = [];
 
-  insertMarkdown(snippet: string): void {
-    const textarea = document.getElementById('docs') as HTMLTextAreaElement;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const before = this.documentation.slice(0, start);
-    const after = this.documentation.slice(end);
-    this.documentation = before + snippet + after;
+  constructor(
+    private algorithmService: AlgorithmService,
+    private router: Router
+  ) { }
 
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + snippet.length, start + snippet.length);
-      this.updatePreview();
-    });
+  async onTagInputChange(): Promise<void> {
+    const query = this.tagInput.trim();
+    if (query.length > 0) {
+      try {
+        this.suggestions = await this.algorithmService.searchTags(query).toPromise() || [];
+      } catch {
+        this.suggestions = [];
+      }
+    } else {
+      this.suggestions = [];
+    }
+    this.selectedSuggestionIndex = -1;
   }
 
-  async updatePreview(): Promise<void> {
-    this.markdownPreview = await marked.parse(this.documentation);
+  async selectSuggestion(tag: { id: number, name: string }): Promise<void> {
+    if (!this.tags.some(t => t.id === tag.id)) {
+      this.tags.push(tag);
+    }
+    this.resetTagInput();
   }
 
-  handleTagInput(event: KeyboardEvent): void {
-    if (event.key === ' ') {
+  async handleKeyDown(event: KeyboardEvent): Promise<void> {
+    const key = event.key;
+    const max = this.suggestions.length;
+
+    if (key === 'ArrowDown') {
       event.preventDefault();
-      const input = event.target as HTMLInputElement;
-      const value = input.value.trim();
-      if (value && !this.tags.includes(value)) {
-        if (this.tags.length < 10) { 
-          this.tags.push(value);
-        }
-        input.value = '';
+      this.selectedSuggestionIndex = (this.selectedSuggestionIndex + 1) % (max + 1);
+    } else if (key === 'ArrowUp') {
+      event.preventDefault();
+      this.selectedSuggestionIndex =
+        (this.selectedSuggestionIndex - 1 + (max + 1)) % (max + 1);
+    } else if (key === 'Enter' || key === 'Tab') {
+      event.preventDefault();
+      const query = this.tagInput.trim();
+
+      if (!query) return;
+
+      if (this.selectedSuggestionIndex >= 0 && this.selectedSuggestionIndex < this.suggestions.length) {
+        const selected = this.suggestions[this.selectedSuggestionIndex];
+        await this.selectSuggestion(selected);
+      } else {
+        this.addNewTagFromInput();
       }
     }
+  }
+
+  addNewTagFromInput(): void {
+    const name = this.tagInput.trim();
+    if (!name) return;
+
+    const lowerName = name.toLowerCase();
+
+    if (
+      !this.tags.some(t => t.name.toLowerCase() === lowerName) &&
+      !this.pendingNewTags.includes(lowerName)
+    ) {
+      this.tags.push({ id: 0, name });
+      this.pendingNewTags.push(lowerName);
+    }
+
+    this.resetTagInput();
+  }
+
+  resetTagInput(): void {
+    this.tagInput = '';
+    this.suggestions = [];
+    this.selectedSuggestionIndex = -1;
   }
 
   removeTag(index: number): void {
     this.tags.splice(index, 1);
   }
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.selectedFile = input.files?.[0] || null;
+  async onSubmit(): Promise<void> {
+    this.loading = true;
+    try {
+      const finalTags: { id: number; name: string }[] = [...this.tags];
+
+      for (const name of this.pendingNewTags) {
+        await this.algorithmService.createTag(name).toPromise();
+        const found = await this.algorithmService.searchTags(name).toPromise();
+        const created = found?.find(t => t.name.toLowerCase() === name.toLowerCase());
+        if (!created) throw new Error(`Failed to retrieve tag: ${name}`);
+        const dummyIndex = finalTags.findIndex(t => t.name.toLowerCase() === name.toLowerCase() && t.id === 0);
+        if (dummyIndex !== -1) finalTags.splice(dummyIndex, 1);
+
+        finalTags.push(created);
+      }
+
+      const result = await this.algorithmService.createAlgorithm({
+        title: this.title,
+        description: this.summary,
+        isPrivate: this.isPrivate
+      }).toPromise();
+
+      if (!result) throw new Error('Algorithm creation returned empty response');
+
+      const newAlgorithmId = parseInt(result.split('/').pop()!);
+      if (isNaN(newAlgorithmId)) throw new Error('Invalid ID extracted from creation response');
+
+      const tagIds = finalTags.map(t => t.id);
+      if (tagIds.length > 0) {
+        await this.algorithmService.assignTags(newAlgorithmId, tagIds).toPromise();
+      }
+
+      this.router.navigate(['/codelet', newAlgorithmId]);
+    } catch (err) {
+      console.error('Error creating codelet:', err);
+      alert('Failed to publish Codelet. Please check your tags and try again.');
+    } finally {
+      this.loading = false;
+    }
   }
 
-  onSubmit(): void {
-    console.log({
-      title: this.title,
-      summary: this.summary,
-      documentation: this.documentation,
-      tags: this.tags,
-      collaborators: this.collaborators,
-      file: this.selectedFile
-    });
+  get shouldShowCreateOption(): boolean {
+    const input = this.tagInput.trim().toLowerCase();
+    return !!input && !this.suggestions.some(s => s.name.toLowerCase() === input);
   }
 }

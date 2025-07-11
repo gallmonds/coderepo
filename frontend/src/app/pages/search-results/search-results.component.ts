@@ -3,13 +3,11 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AlgorithmService } from '../../services/algorithm.service';
 import { AlgorithmSummaryDto } from '../../models/algorithm-summary.dto';
-import { HeaderComponent } from '../../shared/header/header.component';
-import { FooterComponent } from '../../shared/footer/footer.component';
 
 @Component({
   selector: 'app-search-results',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, FooterComponent],
+  imports: [CommonModule],
   templateUrl: './search-results.component.html',
   styleUrls: ['./search-results.component.css']
 })

@@ -40,10 +40,32 @@ export class UserService {
     return localStorage.getItem('jwt_token') !== null;
   }
   getUserIdFromToken(): number | null {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) return null;
+
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload?.sub ? parseInt(payload.sub) : null;
+  }
+  updateProfile(dto: { username: string; biography: string }): Observable<{ message: string; token: string }> {
+  return this.http.put<{ message: string; token: string }>(`${this.api}/users/profile`, dto);
+  }
+  uploadProfilePicture(formData: FormData): Observable<{ profilePic: string }> {
+    return this.http.post<{ profilePic: string }>(`${this.api}/profile/picture`, formData);
+  }
+  getUsernameFromToken(): string | null {
   const token = localStorage.getItem('jwt_token');
   if (!token) return null;
 
-  const payload = JSON.parse(atob(token.split('.')[1]));
-  return payload?.sub ? parseInt(payload.sub) : null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.username
+      || payload.unique_name
+      || payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name']
+      || null;
+  } catch {
+    return null;
+  }
 }
+
+
 }

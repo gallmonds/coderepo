@@ -1,4 +1,4 @@
-<header class="relative bg-gray-800 text-white px-4 py-3 shadow-md">
+<header class="fixed top-0 left-0 w-full z-50 bg-gray-800 text-white px-4 py-3 shadow-md">
   <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
     <!-- Logo -->
@@ -26,7 +26,7 @@
     <!-- User Info or Guest Links -->
     <div class="md:static absolute top-3 right-4 flex items-center gap-4 w-fit">
       <ng-container *ngIf="user; else guestLinks">
-        <a href="/my-profile" class="flex items-center gap-2 hover:underline">
+        <a [routerLink]="['/user', user.id]" class="flex items-center gap-2 hover:underline">
           <img 
             [src]="avatarUrl" 
             alt="User Avatar" 

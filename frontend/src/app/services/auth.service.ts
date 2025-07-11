@@ -43,7 +43,7 @@ export class AuthService {
     this.loggedIn.next(true);
   }
 
-  private hasValidToken(): boolean {
+  public hasValidToken(): boolean {
     const token = this.getToken();
     if (!token) return false;
 
@@ -67,4 +67,9 @@ export class AuthService {
       return null;
     }
   }
+  public saveToken(token: string): void {
+  localStorage.setItem(this.tokenKey, token);
+  this.loggedIn.next(true);
+}
+
 }

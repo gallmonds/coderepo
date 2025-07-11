@@ -122,6 +122,9 @@ namespace coderepo_api.Repository
             return relativePath;
         }
 
-
+        public async Task<DbUser?> GetUserByIdAsync(int userId)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        }
     }
 }

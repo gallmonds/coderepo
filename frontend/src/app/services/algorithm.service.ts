@@ -19,27 +19,65 @@ export class AlgorithmService {
     userId?: number
   ): Observable<AlgorithmSummaryDto[]> {
     let url = `${this.api}/summary?filter=${filter}&page=${page}&pageSize=${pageSize}&showPrivates=${showPrivates}`;
-
     if (userId !== undefined) {
       url += `&userId=${userId}`;
     }
-
     return this.http.get<AlgorithmSummaryDto[]>(url);
   }
+
   searchAlgorithms(query: string, page: number, pageSize: number): Observable<AlgorithmSummaryDto[]> {
     return this.http.get<AlgorithmSummaryDto[]>(
       `${this.api}/algorithms/search?query=${encodeURIComponent(query)}&page=${page}&pageSize=${pageSize}`
     );
   }
+
   getAlgorithmById(id: number): Observable<AlgorithmDetailDto> {
     return this.http.get<AlgorithmDetailDto>(`${this.api}/algorithms/${id}`);
   }
+
   getLatestCodeFilePath(algorithmId: number, language: string): Observable<{ path: string }> {
     return this.http.get<{ path: string }>(
       `${this.api}/latest-static-file?algorithmId=${algorithmId}&lang=${encodeURIComponent(language)}`
     );
   }
+
   commentAlgorithm(dto: CommentAlgorithmDto): Observable<any> {
-  return this.http.post(`${this.api}/comment`, dto);
+    return this.http.post(`${this.api}/comment`, dto);
+  }
+
+  createAlgorithm(payload: {
+    title: string;
+    description: string;
+    isPrivate: boolean;
+  }): Observable<string> {
+    return this.http.post<string>(
+      `${this.api}/create`,
+      payload,
+      { responseType: 'text' as 'json' }
+    );
+  }
+
+
+  assignTags(algorithmId: number, tagIds: number[]): Observable<any> {
+    return this.http.post(`${this.api}/tag/assign`, {
+      algorithmId,
+      tagIds
+    });
+  }
+
+  searchTags(query: string): Observable<{ id: number; name: string }[]> {
+    return this.http.get<{ id: number; name: string }[]>(
+      `${this.api}/tag/search?q=${encodeURIComponent(query)}`
+    );
+  }
+
+  createTag(name: string): Observable<void> {
+  return this.http.post<void>(`${this.api}/tag/create`, {
+    tags: [name]
+  });
+}
+
+addLanguage(formData: FormData): Observable<any> {
+  return this.http.post(`${this.api}/addlang`, formData);
 }
 }

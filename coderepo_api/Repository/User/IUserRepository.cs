@@ -11,5 +11,6 @@ namespace coderepo_api.Repository
         Task<UserProfileDto?> GetUserProfileAsync(int userId);
         Task<bool> UpdateUserProfile(int userId, string newUsername, string? newBio);
         Task<string?> UpdateProfilePictureAsync(int userId, IFormFile file);
+        Task<DbUser?> GetUserByIdAsync(int userId);
     }
 }

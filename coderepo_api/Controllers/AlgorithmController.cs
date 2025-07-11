@@ -6,6 +6,7 @@ using coderepo_api.Repository.Algorithm;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace coderepo_api.Controllers
 {
@@ -198,14 +199,13 @@ namespace coderepo_api.Controllers
             if (dto.Tags == null || dto.Tags.Count == 0)
                 return BadRequest("No tags provided.");
 
-
             int userId = User.GetUserId();
 
             var success = await _repository.CreateTagsAsync(dto.Tags, userId);
             if (!success)
                 return StatusCode(500, "Error creating tags.");
 
-            return Ok("Tags created successfully.");
+            return NoContent();
         }
 
         [Authorize]
@@ -222,6 +222,7 @@ namespace coderepo_api.Controllers
             return Ok(new { message = "Tags assigned successfully." });
         }
 
+        [AllowAnonymous]
         [HttpGet("tag/search")]
         public async Task<IActionResult> SearchTags([FromQuery] string q)
         {
@@ -258,7 +259,5 @@ namespace coderepo_api.Controllers
 
             return Ok(new { path = publicPath });
         }
-
-
     }
 }

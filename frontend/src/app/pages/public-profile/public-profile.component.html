@@ -1,22 +1,118 @@
-<div class="bg-gray-900 text-white min-h-screen p-6">
+<div class="bg-gray-900 text-white p-6 flex-grow" *ngIf="user as u">
   <div class="max-w-4xl mx-auto">
-    <!-- Profile Header -->
-    <div class="flex items-center space-x-4 mb-6">
-      <img [src]="user.avatar" alt="Avatar" class="w-20 h-20 rounded-full">
-      <div>
-        <h1 class="text-2xl font-bold">{{ user.username }}</h1>
-        <p class="text-sm text-gray-400">{{ user.bio }}</p>
-        <p class="text-xs text-gray-500 mt-1">Joined on {{ user.joined }}</p>
+    
+    <div *ngIf="uploadSuccess || uploadError" class="relative mb-2">
+      <div
+        class="absolute z-50 bg-gray-800 border border-gray-600 text-sm px-3 py-1 rounded shadow"
+        [ngClass]="uploadSuccess ? 'text-green-400' : 'text-red-400'">
+        {{ uploadSuccess ? '✔ Profile picture updated' : '✖ Upload failed' }}
       </div>
     </div>
 
-    <!-- Public Codelets -->
-    <div>
-      <h2 class="text-xl font-bold mb-4">Codelets by {{ user.username }}</h2>
-      <div *ngFor="let codelet of userCodelets" class="bg-gray-800 p-4 rounded mb-3 border border-gray-700">
-        <h3 class="text-lg font-semibold">{{ codelet.title }}</h3>
-        <p class="text-sm text-gray-400">Created on {{ codelet.createdAt }}</p>
+    <div class="flex items-center space-x-4 mb-6">
+      
+      <div *ngIf="isOwnProfile; else staticAvatar" class="relative w-20 h-20 group">
+        <img [src]="avatarUrl" alt="Avatar"
+             class="w-full h-full rounded-full object-cover transition-opacity duration-500"
+             [class.opacity-50]="isUploading">
+
+        <div
+          class="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+          (click)="triggerFileInput()">
+          <ng-container *ngIf="!isUploading; else loadingIcon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15.232 5.232l3.536 3.536M9 11l6-6 3.536 3.536-6 6H9v-3z" />
+            </svg>
+          </ng-container>
+          <ng-template #loadingIcon>
+            <div class="loader border-t-white border-2 border-solid rounded-full w-5 h-5 animate-spin"></div>
+          </ng-template>
+        </div>
+
+        <input #fileInput type="file" accept="image/*" hidden (change)="uploadProfilePicture($event)">
+      </div>
+
+      <ng-template #staticAvatar>
+        <img [src]="avatarUrl" alt="Avatar" class="w-20 h-20 rounded-full object-cover">
+      </ng-template>
+
+      <div>
+        <div class="flex justify-between items-center mb-2">
+          <div *ngIf="isOwnProfile && !editing">
+            <button (click)="editing = true"
+              class="text-sm text-gray-300 hover:text-white flex items-center space-x-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15.232 5.232l3.536 3.536M9 11l6-6 3.536 3.536-6 6H9v-3z" />
+              </svg>
+              <span>Edit</span>
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="editing; else showProfile">
+          <input [(ngModel)]="editUsername" class="bg-gray-700 text-white p-2 rounded w-full mb-2" />
+          <textarea [(ngModel)]="editBiography" rows="2" class="bg-gray-700 text-white p-2 rounded w-full mb-2"
+            placeholder="Write your biography..."></textarea>
+          <div class="flex space-x-2">
+            <button (click)="confirmEdit()"
+              class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">Confirm</button>
+            <button (click)="cancelEdit()"
+              class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded">Cancel</button>
+          </div>
+        </div>
+
+        <ng-template #showProfile>
+          <h1 class="text-2xl font-bold">{{ u.username }}</h1>
+          <p class="text-sm text-gray-400">{{ u.biography?.trim() || 'No description provided.' }}</p>
+        </ng-template>
+
+        <p class="text-xs text-gray-500 mt-1">Joined on {{ formattedJoinDate }}</p>
       </div>
     </div>
+
+    <div class="mb-4">
+      <label for="filter" class="block mb-1 text-sm text-gray-300">Sort by:</label>
+      <select id="filter" [(ngModel)]="selectedFilter" (change)="loadCodelets()"
+        class="bg-gray-800 text-white p-2 rounded">
+        <option value="most_recent">Most Recent</option>
+        <option value="most_popular">Most Popular</option>
+        <option value="most_rated">Most Rated</option>
+      </select>
+    </div>
+
+    <div *ngIf="codelets.length > 0; else noCodelets">
+      <div *ngFor="let algo of codelets" class="bg-gray-800 p-4 rounded mb-3 border border-gray-700">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <img [src]="'http://localhost:8080/static/' + (algo.owner.profilePic || 'media/pfp/nopfp.png')"
+              class="w-6 h-6 rounded-full" alt="">
+            <a [routerLink]="['/user', algo.owner.id]">
+              <span>{{ algo.owner.username }}</span>
+            </a>
+          </div>
+          <div class="text-sm text-gray-400">{{ algo.commentCount }} 💬 | {{ algo.ratingCount }} ⭐</div>
+        </div>
+        <a [routerLink]="['/codelet', algo.algorithmId]">
+          <h3 class="text-white font-bold mt-2">{{ algo.title }}</h3>
+          <p class="text-sm text-gray-400">{{ algo.description }}</p>
+        </a>
+        <div class="flex justify-between items-center mt-3 text-gray-400 text-sm">
+          <div class="flex space-x-3">
+            <ng-container *ngFor="let tag of algo.tags">
+              <span>#{{ tag }}</span>
+            </ng-container>
+          </div>
+          <span class="text-xs">+{{ algo.languages.length }} langs</span>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noCodelets>
+      <div class="text-sm text-center text-gray-500 mt-4">No codelets found for this user.</div>
+    </ng-template>
   </div>
 </div>

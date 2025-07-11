@@ -4,11 +4,12 @@ import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { UserProfileDto } from '../../models/user-profile.dto';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
@@ -57,6 +58,5 @@ export class HeaderComponent {
       window.location.href = `/search-results?query=${encodeURIComponent(this.searchText.trim())}`;
     }
   }
-
 }
 

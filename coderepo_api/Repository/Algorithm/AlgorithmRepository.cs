@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using NpgsqlTypes;
 using System.IO;
+using System.Text.RegularExpressions;
 
 
 namespace coderepo_api.Repository.Algorithm
@@ -204,7 +205,7 @@ namespace coderepo_api.Repository.Algorithm
                 query = query.Where(a => a.AlgorithmMeta.IsPrivate != '1');
             }
 
-            if (filter == "user_algorithms" && userId.HasValue)
+            if (userId.HasValue)
             {
                 query = query.Where(a => a.OwnerId == userId.Value);
             }
@@ -219,6 +220,7 @@ namespace coderepo_api.Repository.Algorithm
                     CreatedAt = a.CreatedAt,
                     Owner = new UserSummaryDto
                     {
+                        Id = a.UserDb.Id,
                         Username = a.UserDb.Username,
                         ProfilePic = a.UserDb.MediaDb.FilePath
                     },
@@ -248,7 +250,6 @@ namespace coderepo_api.Repository.Algorithm
                         .ToList();
                     break;
                 case "most_recent":
-                case "user_algorithms":
                 default:
                     baseList = baseList
                         .OrderByDescending(a => a.CreatedAt)
@@ -261,6 +262,7 @@ namespace coderepo_api.Repository.Algorithm
                 .Take(pageSize)
                 .ToList();
         }
+
 
 
         public async Task<AlgorithmDetailDto?> GetAlgorithmDetailsAsync(int algorithmId, int? viewerUserId)
@@ -321,7 +323,13 @@ namespace coderepo_api.Repository.Algorithm
                     IconPath = al.SupportedLang.MediaDb.FilePath,
                     CodeletPath = "codelet/" + al.RootlangPath
                 }).ToList(),
-                Comments = rootComments
+                Comments = rootComments,
+                UserHasLiked = viewerUserId.HasValue
+                && await _context.Ratings.AnyAsync(r =>
+                     r.TypeId == 2 &&
+                     r.ContentId == algorithmId &&
+                     r.UserId == viewerUserId &&
+                     r.AuditIsDeleted == '0')
             };
         }
 
@@ -392,15 +400,56 @@ namespace coderepo_api.Repository.Algorithm
                 query = query.Where(a => a.AlgorithmMeta.IsPrivate != '1');
             }
 
+            List<string> tags = new();
+            List<string> langs = new();
+            string? username = null;
+            string? titleQuery = null;
+
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
-                string lowered = searchQuery.Trim().ToLower();
-                query = query.Where(a => a.Title.ToLower().Contains(lowered));
-                query = query.OrderBy(a => a.Title.ToLower().IndexOf(lowered));
+                var lowered = searchQuery.ToLower();
+
+                foreach (Match m in Regex.Matches(lowered, @"\[(.*?)\]"))
+                    tags.Add(m.Groups[1].Value.Trim());
+
+                foreach (Match m in Regex.Matches(lowered, @"\{(.*?)\}"))
+                    langs.Add(m.Groups[1].Value.Trim());
+
+                var atMatch = Regex.Match(lowered, @"@(\w+)");
+                if (atMatch.Success)
+                    username = atMatch.Groups[1].Value.Trim();
+
+                titleQuery = Regex.Replace(lowered, @"(\[\w+\])|(\{\w+\})|(@\w+)", "")
+                                .Trim();
+            }
+
+            if (!string.IsNullOrWhiteSpace(titleQuery))
+            {
+                query = query.Where(a => a.Title.ToLower().Contains(titleQuery));
+                query = query.OrderBy(a => a.Title.ToLower().IndexOf(titleQuery));
             }
             else
             {
                 query = query.OrderByDescending(a => a.CreatedAt);
+            }
+
+            foreach (var tag in tags)
+            {
+                query = query.Where(a =>
+                    a.AlgorithmTags.Any(at =>
+                        at.Tag.Name.ToLower() == tag));
+            }
+
+            foreach (var lang in langs)
+            {
+                query = query.Where(a =>
+                    a.AlgorithmLangs.Any(al =>
+                        al.SupportedLang.LangName.ToLower() == lang));
+            }
+
+            if (!string.IsNullOrEmpty(username))
+            {
+                query = query.Where(a => a.UserDb.Username.ToLower() == username);
             }
 
             return await query.AsSplitQuery()
@@ -414,6 +463,7 @@ namespace coderepo_api.Repository.Algorithm
                     CreatedAt = a.CreatedAt,
                     Owner = new UserSummaryDto
                     {
+                        Id = a.UserDb.Id,
                         Username = a.UserDb.Username,
                         ProfilePic = a.UserDb.MediaDb.FilePath
                     },
@@ -428,6 +478,7 @@ namespace coderepo_api.Repository.Algorithm
                 })
                 .ToListAsync();
         }
+
 
         public async Task<bool> AssignTagsAsync(AssignTagsDto dto, int userId)
         {

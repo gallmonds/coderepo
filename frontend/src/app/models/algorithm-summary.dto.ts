@@ -11,6 +11,7 @@ export interface AlgorithmSummaryDto {
     iconPath: string;
   }[];
   owner: {
+    id: BigInteger;
     username: string;
     profilePic: string;
   };

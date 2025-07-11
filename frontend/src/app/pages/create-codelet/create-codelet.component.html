@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gray-900 flex justify-center p-6">
+<div class="bg-gray-900 flex justify-center p-6">
   <div class="max-w-2xl w-full bg-gray-800 rounded-xl shadow-lg p-10">
     <h1 class="text-2xl font-semibold text-gray-300 mb-6">Create a New Codelet</h1>
 
@@ -6,73 +6,49 @@
       <div>
         <label for="title" class="block text-sm text-gray-300 mb-1">Title</label>
         <input id="title" name="title" [(ngModel)]="title" required
-               class="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-gray-300 rounded-lg"
-               placeholder="e.g. Quick Sort Implementation" />
+          class="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-gray-300 rounded-lg"
+          placeholder="e.g. Quick Sort Implementation" />
       </div>
 
       <div>
         <label for="summary" class="block text-sm text-gray-300 mb-1">Short Description</label>
         <textarea id="summary" name="summary" [(ngModel)]="summary" required rows="3"
-                  class="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-gray-300 rounded-lg resize-none"
-                  placeholder="A brief one-line summary..."></textarea>
-      </div>
-
-      <div>
-        <label for="file" class="block text-sm text-gray-300 mb-1">Upload Code File</label>
-        <input
-          id="file"
-          type="file"
-          (change)="onFileSelected($event)"
-          class="px-4 py-2 bg-gray-900 border border-gray-500 text-gray-300 rounded-lg cursor-pointer"
-        />
-      </div>
-
-
-      <div>
-        <label class="block text-sm text-gray-300 mb-1">Documentation (Markdown supported)</label>
-        <div class="flex space-x-2 mb-2">
-          <button type="button" (click)="insertMarkdown('**bold**')" class="px-2 py-1 bg-gray-700 rounded text-sm">Bold</button>
-          <button type="button" (click)="insertMarkdown('_italic_')" class="px-2 py-1 bg-gray-700 rounded text-sm">Italic</button>
-          <button type="button" (click)="insertMarkdown('[text](url)')" class="px-2 py-1 bg-gray-700 rounded text-sm">Link</button>
-        </div>
-        <textarea id="docs" name="docs" [(ngModel)]="documentation" (input)="updatePreview()" rows="6"
-                  class="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-gray-300 rounded-lg"
-                  placeholder="Markdown content..."></textarea>
-        <div class="mt-2 p-4 bg-gray-700 rounded text-sm" [innerHTML]="markdownPreview | safeHtml"></div>
+          class="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-gray-300 rounded-lg resize-none"
+          placeholder="A brief one-line summary..."></textarea>
       </div>
 
       <div>
         <label class="block text-sm text-gray-300 mb-1">Tags</label>
-        <input
-          type="text"
-          (keydown)="handleTagInput($event)"
+        <input type="text" [(ngModel)]="tagInput" name="tagInput" (input)="onTagInputChange()"
+          (keydown)="handleKeyDown($event)"
           class="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-gray-300 rounded-lg"
-          placeholder="Add a tag and press space"
-        />
+          placeholder="Start typing to see suggestions..." autocomplete="off" />
+
+        <ul *ngIf="suggestions.length || tagInput.trim()" class="bg-gray-700 border border-gray-600 rounded mt-1">
+          <li *ngFor="let suggestion of suggestions; let i = index" [class.bg-blue-600]="i === selectedSuggestionIndex"
+            class="cursor-pointer px-3 py-1 text-white hover:bg-blue-500" (click)="selectSuggestion(suggestion)">
+            #{{ suggestion.name }}
+          </li>
+          <li *ngIf="shouldShowCreateOption" [class.bg-blue-600]="selectedSuggestionIndex === suggestions.length"
+            class="cursor-pointer px-3 py-1 text-white hover:bg-green-600" (click)="addNewTagFromInput()">
+            ➕ Create "{{ tagInput.trim() }}"
+          </li>
+        </ul>
+
+
         <div class="mt-2 flex flex-wrap">
-          <span
-            *ngFor="let tag of tags; let i = index"
-            (click)="removeTag(i)"
-            class="inline-flex items-center bg-gray-600 text-white px-3 py-1 rounded mr-2 mb-2 text-sm cursor-pointer hover:bg-red-500 hover:text-white transition"
-          >
-            #{{ tag }}
+          <span *ngFor="let tag of tags; let i = index" (click)="removeTag(i)"
+            class="inline-flex items-center bg-gray-600 text-white px-3 py-1 rounded mr-2 mb-2 text-sm cursor-pointer hover:bg-red-500 transition">
+            #{{ tag.name }}
           </span>
         </div>
         <p class="text-xs text-gray-400 mt-1">Click on a tag to remove it.</p>
       </div>
 
-
-      <div>
-        <label for="collaborators" class="block text-sm text-gray-300 mb-1">Collaborators (by email)</label>
-        <input id="collaborators" name="collaborators" [(ngModel)]="collaborators"
-               class="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-gray-300 rounded-lg"
-               placeholder="email1@example.com, email2@example.com" />
-      </div>
-
       <div class="flex justify-between items-center">
-        <button type="submit"
-                class="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium text-gray-300">
-          Publish Codelet
+        <button type="submit" [disabled]="loading"
+          class="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium text-gray-300">
+          {{ loading ? 'Publishing...' : 'Publish Codelet' }}
         </button>
         <a href="#" class="text-sm text-gray-300 underline hover:text-gray-500">Need help writing good docs?</a>
       </div>

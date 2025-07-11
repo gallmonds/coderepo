@@ -1,111 +1,106 @@
-<app-header></app-header>
+<div class="flex-grow">
+  <div class="bg-gray-900 flex items-center justify-center p-4">
+    <div class="bg-gray-800 text-white font-sans rounded-lg shadow-lg p-6 w-full max-w-3xl mx-auto mt-6">
 
-<div class="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-  <div class="bg-gray-800 text-white font-sans rounded-lg shadow-lg p-6 w-full max-w-3xl mx-auto mt-6">
+      <div class="px-4 mt-4" *ngIf="user as u">
+        <h1 class="text-lg">
+          Welcome back <strong>{{ u.username || 'Guest' }}!</strong>
+        </h1>
+        <p class="text-sm text-gray-400">
+          Feeling inspired?
+          <a href="/create-codelet" class="text-blue-400 underline">Create a Codelet</a>
+        </p>
+      </div>
 
-    <!-- Welcome -->
-    <div class="px-4 mt-4">
-      <h1 class="text-lg">
-        Welcome back <strong>{{ user?.username || 'Guest' }}!</strong>
-      </h1>
-      <p class="text-sm text-gray-400">
-        Feeling inspired?
-        <a href="/create-codelet" class="text-blue-400 underline">Create a Codelet</a>
-      </p>
-    </div>
+      <div class="px-4 mt-6">
+        <h2 class="text-lg font-semibold">Popular Codelets</h2>
 
-    <!-- Popular Codelets -->
-    <div class="px-4 mt-6">
-      <h2 class="text-lg font-semibold">Popular Codelets</h2>
-
-      <ng-container *ngIf="loadingPopular; else showPopular">
-        <div class="text-center py-4 text-gray-400 animate-pulse">Loading popular codelets...</div>
-      </ng-container>
-
-      <ng-template #showPopular>
-        <ng-container *ngIf="popular.length > 0; else noPopular">
-          <div *ngFor="let algo of popular" class="bg-gray-900 p-4 rounded-lg mt-4">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-2">
-                <img [src]="'http://localhost:8080/static/' + (algo.owner.profilePic || 'media/pfp/nopfp.png')"
-                  class="w-6 h-6 rounded-full" alt="">
-                <a [href]="'/user/' + algo.owner.username">
-                  <span>{{ algo.owner.username }}</span>
-                </a>
-              </div>
-              <div class="text-sm text-gray-400">{{ algo.commentCount }} 💬 | {{ algo.ratingCount }} ⭐</div>
-            </div>
-            <a [href]="'/codelet/' + algo.algorithmId">
-              <h3 class="text-white font-bold mt-2">{{ algo.title }}</h3>
-              <p class="text-sm text-gray-400">{{ algo.description }}</p>
-            </a>
-            <div class="flex justify-between items-center mt-3 text-gray-400 text-sm">
-              <div class="flex space-x-3">
-                <ng-container *ngFor="let tag of algo.tags">
-                  <span>#{{ tag }}</span>
-                </ng-container>
-              </div>
-              <span class="text-xs">+{{ algo.languages.length }} langs</span>
-            </div>
-          </div>
+        <ng-container *ngIf="loadingPopular; else showPopular">
+          <div class="text-center py-4 text-gray-400 animate-pulse">Loading popular codelets...</div>
         </ng-container>
 
-        <ng-template #noPopular>
-          <div class="text-sm text-center text-gray-500 mt-4">Cannot find popular codelets</div>
+        <ng-template #showPopular>
+          <ng-container *ngIf="popular.length > 0; else noPopular">
+            <div *ngFor="let algo of popular" class="bg-gray-900 p-4 rounded-lg mt-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <img [src]="'http://localhost:8080/static/' + (algo.owner.profilePic || 'media/pfp/nopfp.png')"
+                    class="w-6 h-6 rounded-full" alt="">
+                  <a [href]="'/user/' + algo.owner.id">
+                    <span>{{ algo.owner.username }}</span>
+                  </a>
+                </div>
+                <div class="text-sm text-gray-400">{{ algo.commentCount }} 💬 | {{ algo.ratingCount }} ⭐</div>
+              </div>
+              <a [href]="'/codelet/' + algo.algorithmId">
+                <h3 class="text-white font-bold mt-2">{{ algo.title }}</h3>
+                <p class="text-sm text-gray-400">{{ algo.description }}</p>
+              </a>
+              <div class="flex justify-between items-center mt-3 text-gray-400 text-sm">
+                <div class="flex space-x-3">
+                  <ng-container *ngFor="let tag of algo.tags">
+                    <span>#{{ tag }}</span>
+                  </ng-container>
+                </div>
+                <span class="text-xs">+{{ algo.languages.length }} langs</span>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-template #noPopular>
+            <div class="text-sm text-center text-gray-500 mt-4">Cannot find popular codelets</div>
+          </ng-template>
         </ng-template>
-      </ng-template>
 
-      <a href="/popular-codelets" class="block w-full mt-4 py-2 bg-gray-700 text-white text-center rounded-lg">See
-        more</a>
-    </div>
+        <a href="/popular-codelets" class="block w-full mt-4 py-2 bg-gray-700 text-white text-center rounded-lg">See
+          more</a>
+      </div>
 
-    <!-- Recent Codelets -->
-    <div class="px-4 mt-6">
-      <h2 class="text-lg font-semibold">Recent Codelets</h2>
+      <!-- Recent Codelets -->
+      <div class="px-4 mt-6">
+        <h2 class="text-lg font-semibold">Recent Codelets</h2>
 
-      <ng-container *ngIf="loadingRecent; else showRecent">
-        <div class="text-center py-4 text-gray-400 animate-pulse">Loading recent codelets...</div>
-      </ng-container>
-
-      <ng-template #showRecent>
-        <ng-container *ngIf="recent.length > 0; else noRecent">
-          <div *ngFor="let algo of recent" class="bg-gray-900 p-4 rounded-lg mt-4">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-2">
-                <img [src]="'http://localhost:8080/static/' + (algo.owner.profilePic || 'media/pfp/nopfp.png')"
-                  class="w-6 h-6 rounded-full" alt="">
-                <a [href]="'/user/' + algo.owner.username">
-                  <span>{{ algo.owner.username }}</span>
-                </a>
-              </div>
-              <div class="text-sm text-gray-400">{{ algo.commentCount }} 💬 | {{ algo.ratingCount }} ⭐</div>
-            </div>
-            <a [href]="'/codelet/' + algo.algorithmId">
-              <h3 class="text-white font-bold mt-2">{{ algo.title }}</h3>
-              <p class="text-sm text-gray-400">{{ algo.description }}</p>
-            </a>
-            <div class="flex justify-between items-center mt-3 text-gray-400 text-sm">
-              <div class="overflow-hidden whitespace-nowrap text-ellipsis max-w-[200px]">
-                <ng-container *ngFor="let tag of algo.tags">
-                  <span class="mr-2">#{{ tag }}</span>
-                </ng-container>
-              </div>
-
-              <span class="text-xs">+{{ algo.languages.length }} langs</span>
-            </div>
-          </div>
+        <ng-container *ngIf="loadingRecent; else showRecent">
+          <div class="text-center py-4 text-gray-400 animate-pulse">Loading recent codelets...</div>
         </ng-container>
 
-        <ng-template #noRecent>
-          <div class="text-sm text-center text-gray-500 mt-4">Cannot find recent codelets</div>
+        <ng-template #showRecent>
+          <ng-container *ngIf="recent.length > 0; else noRecent">
+            <div *ngFor="let algo of recent" class="bg-gray-900 p-4 rounded-lg mt-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <img [src]="'http://localhost:8080/static/' + (algo.owner.profilePic || 'media/pfp/nopfp.png')"
+                    class="w-6 h-6 rounded-full" alt="">
+                  <a [href]="'/user/' + algo.owner.id">
+                    <span>{{ algo.owner.username }}</span>
+                  </a>
+                </div>
+                <div class="text-sm text-gray-400">{{ algo.commentCount }} 💬 | {{ algo.ratingCount }} ⭐</div>
+              </div>
+              <a [href]="'/codelet/' + algo.algorithmId">
+                <h3 class="text-white font-bold mt-2">{{ algo.title }}</h3>
+                <p class="text-sm text-gray-400">{{ algo.description }}</p>
+              </a>
+              <div class="flex justify-between items-center mt-3 text-gray-400 text-sm">
+                <div class="overflow-hidden whitespace-nowrap text-ellipsis max-w-[200px]">
+                  <ng-container *ngFor="let tag of algo.tags">
+                    <span class="mr-2">#{{ tag }}</span>
+                  </ng-container>
+                </div>
+                <span class="text-xs">+{{ algo.languages.length }} langs</span>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-template #noRecent>
+            <div class="text-sm text-center text-gray-500 mt-4">Cannot find recent codelets</div>
+          </ng-template>
         </ng-template>
-      </ng-template>
 
-      <a href="/recent-codelets" class="block w-full mt-4 py-2 bg-gray-700 text-white text-center rounded-lg">See
-        more</a>
+        <a href="/recent-codelets" class="block w-full mt-4 py-2 bg-gray-700 text-white text-center rounded-lg">See
+          more</a>
+      </div>
+
     </div>
-
   </div>
 </div>
-
-<app-footer></app-footer>

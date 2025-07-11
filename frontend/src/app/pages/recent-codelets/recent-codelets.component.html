@@ -1,108 +1,45 @@
-<div class="min-h-screen bg-gray-900 flex justify-center p-6">
-  <div class="max-w-3xl w-full bg-gray-800 rounded-xl shadow-lg p-10 text-gray-300">
+<div class="bg-gray-900 flex items-center justify-center p-4">
+  <div class="bg-gray-800 text-white font-sans rounded-lg shadow-lg p-6 w-full max-w-3xl mx-auto mt-6">
+    <h2 class="text-lg font-semibold mb-4">Most Recent Codelets</h2>
 
-  <!-- Welcome -->
-  <div class="px-4 mt-4">
-    <h1 class="text-lg font-bold">Recent Codelets</h1>
-    <!-- <p class="text-sm text-gray-400">Feeling inspired? <a href="#" class="text-blue-400 underline">Create a Codelet</a></p> -->
+    <ng-container *ngIf="loading; else loaded">
+      <div class="text-center py-4 text-gray-400 animate-pulse">Loading recent codelets...</div>
+    </ng-container>
+
+    <ng-template #loaded>
+      <ng-container *ngIf="popular.length > 0; else noResults">
+        <div *ngFor="let algo of popular" class="bg-gray-900 p-4 rounded-lg mb-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <img [src]="getProfilePic(algo.owner.profilePic)" class="w-6 h-6 rounded-full" alt="">
+              <a [href]="'/user/' + algo.owner.id">{{ algo.owner.username }}</a>
+            </div>
+            <div class="text-sm text-gray-400">
+              {{ algo.commentCount }} 💬 | {{ algo.ratingCount }} ⭐
+            </div>
+          </div>
+          <a [href]="'/codelet/' + algo.algorithmId">
+            <h3 class="text-white font-bold mt-2">{{ algo.title }}</h3>
+            <p class="text-sm text-gray-400">{{ algo.description }}</p>
+          </a>
+          <div class="flex justify-between items-center mt-3 text-gray-400 text-sm">
+            <div class="flex space-x-2 overflow-hidden whitespace-nowrap overflow-ellipsis max-w-[70%]">
+              <span *ngFor="let tag of algo.tags">#{{ tag }}</span>
+            </div>
+            <span class="text-xs">+{{ algo.languages.length }} langs</span>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex justify-between mt-4">
+          <button (click)="prevPage()" [disabled]="page === 1" class="bg-gray-700 px-4 py-2 rounded">Prev</button>
+          <button (click)="nextPage()" [disabled]="popular.length < pageSize" class="bg-gray-700 px-4 py-2 rounded">Next</button>
+        </div>
+      </ng-container>
+
+      <ng-template #noResults>
+        <p class="text-center text-gray-500">No recent codelets found.</p>
+      </ng-template>
+    </ng-template>
   </div>
-
-  <!-- Recent Codelets -->
-  <div class="px-4 mt-6 flex-1 overflow-y-auto">
-    <!-- Card Component (puedes convertir esto en un componente si usas JS o frameworks) -->
-    <div class="space-y-4">
-      <!-- Card 1 -->
-      <div class="bg-gray-800 p-4 rounded-lg shadow-md border-gray-900 border-1">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <img src="https://placehold.co/32x32" class="w-6 h-6 rounded-full" alt="">
-            <span>Cooldude420</span>
-          </div>
-          <div class="text-sm text-gray-400">0 📄 | 0 ⭐</div>
-        </div>
-        <h3 class="text-white font-bold mt-2">Lorem Ipsum</h3>
-        <p class="text-sm text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
-        <p class="text-xs text-green-400 mt-2">✓ Executable in website</p>
-      </div>
-
-      <!-- Card 2 al 5 (copia del mismo formato) -->
-      <div class="bg-gray-800 p-4 rounded-lg shadow-md border-gray-900 border-1">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <img src="https://placehold.co/32x32" class="w-6 h-6 rounded-full" alt="">
-            <span>Ironman98</span>
-          </div>
-          <div class="text-sm text-gray-400">12 📄 | 106 ⭐</div>
-        </div>
-        <h3 class="text-white font-bold mt-2">Sample Text</h3>
-        <p class="text-sm text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
-        <p class="text-xs text-green-400 mt-2">✓ Executable in website</p>
-      </div>
-
-      <!-- Puedes repetir los card según los datos -->
-      <!-- Card 3 -->
-      <div class="bg-gray-800 p-4 rounded-lg shadow-md border-gray-900 border-1">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <img src="https://placehold.co/32x32" class="w-6 h-6 rounded-full" alt="">
-            <span>Ironman98</span>
-          </div>
-          <div class="text-sm text-gray-400">12 📄 | 106 ⭐</div>
-        </div>
-        <h3 class="text-white font-bold mt-2">Sample Text</h3>
-        <p class="text-sm text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
-        <p class="text-xs text-green-400 mt-2">✓ Executable in website</p>
-      </div>
-
-      <!-- Card 4 -->
-      <div class="bg-gray-800 p-4 rounded-lg shadow-md border-gray-900 border-1">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <img src="https://placehold.co/32x32" class="w-6 h-6 rounded-full" alt="">
-            <span>Ironman98</span>
-          </div>
-          <div class="text-sm text-gray-400">12 📄 | 106 ⭐</div>
-        </div>
-        <h3 class="text-white font-bold mt-2">Sample Text</h3>
-        <p class="text-sm text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
-        <p class="text-xs text-green-400 mt-2">✓ Executable in website</p>
-      </div>
-
-      <!-- Card 5 -->
-      <div class="bg-gray-800 p-4 rounded-lg shadow-md border-gray-900 border-1">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <img src="https://placehold.co/32x32" class="w-6 h-6 rounded-full" alt="">
-            <span>Ironman98</span>
-          </div>
-          <div class="text-sm text-gray-400">12 📄 | 106 ⭐</div>
-        </div>
-        <h3 class="text-white font-bold mt-2">Sample Text</h3>
-        <p class="text-sm text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
-        <p class="text-xs text-green-400 mt-2">✓ Executable in website</p>
-      </div>
-    </div>
-
-    <!-- Pagination -->
-    <div class="w-full mt-6 flex justify-center items-center space-x-2">
-      <!-- Botón Anterior -->
-      <button class="px-3 py-1 bg-gray-700 text-white rounded-lg disabled:opacity-50" disabled>
-        &laquo;
-      </button>
-
-      <!-- Números de página -->
-      <button class="px-3 py-1 bg-gray-700 text-white rounded-lg">1</button>
-      <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded-lg">2</button>
-      <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded-lg">3</button>
-      <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded-lg">4</button>
-      <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded-lg">5</button>
-
-      <!-- Botón Siguiente -->
-      <button class="px-3 py-1 bg-gray-700 text-white rounded-lg">
-        &raquo;
-      </button>
-    </div>
-
-  </div>
-</div>
 </div>
